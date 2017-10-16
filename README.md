@@ -1,2 +1,3 @@
 # Agent-Based-Auction-Model
-This repository hosts the Agent-based auction models project
+
+This repository hosts the LCfP Agent-based auctions project.
