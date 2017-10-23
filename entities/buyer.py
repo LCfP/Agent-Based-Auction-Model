@@ -1,4 +1,5 @@
 from .agent import Agent
+from enums.biddingtypes import BiddingTypes
 from typing import NamedTuple
 
 
@@ -9,6 +10,6 @@ class Buyer(Agent):
         self.item_price = .95  # TODO
 
     def bid(self) -> NamedTuple:
-        return self.Bid(action="buy",
+        return self.Bid(action=BiddingTypes.BUY,
                         quantity=self.quantity,
                         item_price=self.item_price)
