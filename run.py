@@ -1,15 +1,11 @@
 from entities import *
 from config import Config
+from random import random
 
-buyers = []
-for _ in range(Config.buyers):
-    buyers.append(Buyer())
+auctioneer = Auctioneer()
 
-sellers = []
-for _ in range(0, Config.sellers):
-    sellers.append(Seller())
+for _ in range(Config.run_length):  # run model!
+    if random() < Config.random_agent_creation:
+        pass  # TODO: create and register an agent, either a Seller or a Buyer
 
-# use seller and buyers lists for the auctioneer
-auctioneer = Auctioneer(buyers, sellers)
-
-auctioneer.auction()  # runs the auction!
+    auctioneer.auction()  # runs the auction!

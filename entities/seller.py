@@ -11,6 +11,8 @@ class Seller(Agent):
         self.quantity = randint(*Config.quantity_range)
         self.item_price = randint(*Config.price_range)
 
+        # TODO add region location (see Buyer)
+
     def bid(self) -> NamedTuple:
         return self.Bid(action=BiddingTypes.SELL,
                         quantity=self.quantity,

@@ -1,6 +1,6 @@
 from .buyer import Buyer
 from .seller import Seller
-from typing import List
+from .agent import Agent
 from operator import attrgetter
 from statistics import median
 
@@ -63,9 +63,9 @@ I tested the function with this data:
 
 class Auctioneer(object):
 
-    def __init__(self, buyers: List[Buyer], sellers: List[Seller]):
-        self.buyers = buyers
-        self.sellers = sellers
+    def __init__(self):
+        self.buyers = []
+        self.sellers = []
 
     def auction(self):
         """
@@ -120,9 +120,8 @@ class Auctioneer(object):
             else:
                 print("Buyer %s gets nothing." % buyer_code)
 
-    def _broker_bids(self):
-        """
-        Helper function to broker the bids into a fair redistribution, according
-        to some algorithm.
-        """
+    def register(self, agent: Agent) -> int:
+        pass  # TODO
+
+    def unregister(self, identifier: int) -> Agent:
         pass  # TODO
