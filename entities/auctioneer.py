@@ -2,7 +2,6 @@ from .buyer import Buyer
 from .seller import Seller
 from typing import List
 from operator import attrgetter
-from collections import namedtuple
 from statistics import median
 
 """
@@ -77,10 +76,10 @@ class Auctioneer(object):
         total_q_s = 0
         auction_items = []
 
-        for m in sellers:
-            total_q_s += m[1]
-            for i in range(m[1]):
-                auction_items.append(m[2])
+        for seller in self.sellers:
+            total_q_s += seller[1]
+            for i in range(seller[1]):
+                auction_items.append(seller[2])
 
         median_p_s = median(sorted(auction_items))
 
@@ -88,10 +87,10 @@ class Auctioneer(object):
         total_q_b = 0
         auction_items_b = []
 
-        for n in buyers:
-            total_q_b += n[1]
-            for j in range(n[1]):
-                auction_items_b.append(n[2])
+        for buyer in self.buyers:
+            total_q_b += buyer[1]
+            for j in range(buyer[1]):
+                auction_items_b.append(buyer[2])
 
         auction_items_b = sorted(auction_items_b, reverse=True)
         median_p_b = median(auction_items_b[0:total_q_s])
@@ -106,17 +105,12 @@ class Auctioneer(object):
         print("Final auction price: %s" % price)
 
         # (5) Distribution of the auction items:
-        """
-        To distribute to the buyers with the highest bids, I had to sort the list. However, this returns the index
-        of the sorted list, not the original index. There should probably be another way to give codes to the
-        sellers and buyers. I was thinking of changing the list to a dictionary, with seller/buyer code as key,
-        and the tuples as values?
-        """
-        buyers = sorted(buyers, key=attrgetter('item_price'), reverse=True)
-        for n in buyers:
-            buyer_quantity = n[1]
+        buyers = sorted(self.buyers, key=attrgetter('item_price'), reverse=True)
 
-            buyer_code = buyers.index(n)
+        for buyer in buyers:
+            buyer_quantity = buyer[1]
+
+            buyer_code = buyers.index(buyer)
             if total_q_s >= buyer_quantity:
                 print("Buyer %s gets %s units." % (buyer_code, buyer_quantity))
                 total_q_s -= buyer_quantity

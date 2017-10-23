@@ -1,13 +1,15 @@
 from .agent import Agent
 from enums.biddingtypes import BiddingTypes
+from config import Config
+from random import randint
 from typing import NamedTuple
 
 
 class Buyer(Agent):
 
     def __init__(self):
-        self.quantity = 10  # TODO
-        self.item_price = .95  # TODO
+        self.quantity = randint(*Config.quantity_range)
+        self.item_price = randint(*Config.price_range)
 
     def bid(self) -> NamedTuple:
         return self.Bid(action=BiddingTypes.BUY,
