@@ -8,10 +8,13 @@ from typing import NamedTuple
 class Seller(Agent):
 
     def __init__(self):
+        self.agent_id = 0
+        self.action = 0
         self.quantity = randint(*Config.quantity_range)
         self.item_price = randint(*Config.price_range)
 
-        # TODO add region location (see Buyer)
+        self.location = [randint(*Config.region[0]),  # x axis
+                         randint(*Config.region[1])]  # y axis
 
     def bid(self) -> NamedTuple:
         return self.Bid(action=BiddingTypes.SELL,

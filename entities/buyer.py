@@ -8,6 +8,8 @@ from typing import NamedTuple
 class Buyer(Agent):
 
     def __init__(self):
+        self.agent_id = 0
+        self.action = 1
         self.quantity = randint(*Config.quantity_range)
         self.item_price = randint(*Config.price_range)
 

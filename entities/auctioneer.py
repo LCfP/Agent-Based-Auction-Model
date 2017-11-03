@@ -1,15 +1,15 @@
 from .buyer import Buyer
 from .seller import Seller
-from operator import attrgetter
-from statistics import median
-from typing import List
-
+from .agent import Agent
+from random import random
 
 class Auctioneer(object):
 
-    def __init__(self, buyers: List[Buyer], sellers: List[Seller]):
-        self.buyers = buyers
-        self.sellers = sellers
+    def __init__(self):
+        self.buyers = []
+        self.sellers = []
+        self.shipments = []
+        self.auction_results = []
 
     def auction(self):
         """
@@ -19,65 +19,57 @@ class Auctioneer(object):
         # List of all buyers and sellers:
         print('+++ REGISTER +++')
         print('Buyers:')
-        print('       ID            Q     P')
-        print('----------------  ------ -----')
-        fmt = '{:7} {:8} {:5}'
+        print(' ID     P')
+        print('---- -----')
+        fmt = '{:4} {:4}'
         for buyer in self.buyers:
-            print(fmt.format(id(buyer), buyer.quantity, buyer.item_price))
+            print(fmt.format(buyer.agent_id, buyer.item_price))
 
         print('\nSellers:')
-        print('       ID            Q     P')
-        print('----------------  ------ -----')
+        print(' ID     P')
+        print('---- -----')
         for seller in self.sellers:
-            print(fmt.format(id(seller), seller.quantity, seller.item_price))
+            print(fmt.format(seller.agent_id, seller.item_price))
 
+        # AUCTION ALGORITHM:
+        # For for every container an auction is run
+        while len(self.buyers) != 0:
+            for buyer in self.buyers:
+                for _ in range(100):
+                    if random() < 0.05:
+                        # Shipments (temporary: are refined later)
+                        shipment = Seller()
+                        shipment_id = id(shipment)
+                        self.shipments.append(shipment)
 
-        # AUCTION ALGORITHM
-        # (1) SELLERS: determine total supply and median item price:
-        total_q_s = 0
-        auction_items = []
-        for seller in self.sellers:
-            total_q_s += seller.quantity
-            for i in range(seller.quantity):
-                auction_items.append(seller.item_price)
-        median_p_s = median(sorted(auction_items))
+                winning_bid = max([shipment.item_price for shipment in self.shipments])
+                # TODO Adjust prices in buyers/sellers (buyer wants higher price than seller)
+                # TODO Also implement location + destination + size + transport costs + pick-up deadline
+                auction = [buyer.agent_id, shipment_id, (winning_bid + buyer.item_price) / 2, winning_bid, buyer.item_price]
+                self.auction_results.append(auction)
+                self.unregister(buyer.agent_id)
 
-        # (2) BUYERS: determine total demand and median item price:
-        total_q_b = 0
-        auction_items_b = []
+        # (2) Print auction results:
+        print('+++ AUCTION RESULTS +++')
+        print('B    Shipment         P   Winning bid Buyer bid')
+        print('--- --------------- ----- ----------- --------')
+        fmt = '{:3} {:5} {:4} {:7} {:10}'
+        for _ in self.auction_results:
+            print(fmt.format(_[0], _[1], _[2], _[3], _[4]))
+            # TODO save results somewhere
+
+    def register(self, agent: Agent):
+        # Container: "Hi, I'm here!"
+        if agent.action == 1:
+            agent.agent_id = 'B%s' % (len(self.buyers) + 1)
+            self.buyers.append(agent)
+        # Seller: "I have a shipment!"
+        if agent.action == 0:
+            agent.agent_id = 'S%s' % (len(self.sellers) + 1)
+            self.sellers.append(agent)
+
+    def unregister(self, agent_id) -> Agent:
         for buyer in self.buyers:
-            total_q_b += buyer.quantity
-            for j in range(buyer.quantity):
-                auction_items_b.append(buyer.item_price)
-        auction_items_b = sorted(auction_items_b, reverse=True)
-        median_p_b = median(auction_items_b[0:total_q_s])
-
-        # (3) Determine auction price:
-        auction_price = (median_p_s + median_p_b) / 2
-
-        print('\n+++ AUCTION +++')
-        print("Total supply:        %s" % total_q_s)
-        print("Total demand:        %s" % total_q_b)
-        print("Median seller price:  %s" % median_p_s)
-        print("Median buyer price:   %s" % median_p_b)
-        print("Auction price:        %s" % auction_price)
-
-
-        # RESULTS
-        # Distribution of the auction items:
-        buyers = sorted(self.buyers, key=attrgetter('item_price'), reverse=True)
-
-        print('\n+++ RESULTS +++\nID buyer gets Q items:')
-        print('       ID            Q')
-        print('----------------  ------')
-        fmt = '{:7} {:8}'
-
-        for buyer in buyers:
-            if total_q_s >= buyer.quantity:
-                print(fmt.format(id(buyer), buyer.quantity))
-                total_q_s -= buyer.quantity
-            elif total_q_s > 0:
-                print(fmt.format(id(buyer), total_q_s))
-                total_q_s = 0
-            else:
-                print(fmt.format(id(buyer), 0))
+            if buyer.agent_id == agent_id:
+                self.buyers.remove(buyer)
+                # TODO After shipping: container registers at new location (= destination previous shipment)
