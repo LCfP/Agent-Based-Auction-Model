@@ -4,3 +4,6 @@ class Config(object):
     region = [[0, 200], [0, 200]]
     run_length = 250
     random_agent_creation = .05
+    number_of_sellers = 10
+    production_rate = [1,10]
+
