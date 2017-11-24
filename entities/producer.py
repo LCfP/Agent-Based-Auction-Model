@@ -4,20 +4,25 @@ from random import randint
 
 class Producer(Seller):
     def __init__(self):
-        super(Producer, self).__init__()
+        super().__init__()
+        self.shipments = []
 
+
+
+class Shipment(Producer):
     def produce(self):
         for _ in range(*Config.production_rate):
-            destination_shipment= [randint(*Config.region[0]),  # x axis
+          destination = [randint(*Config.region[0]),  # x axis
                             randint(*Config.region[1])]  # y axis
-            shipments.append([self.location, destination_shipment, id(seller)])
+          self.shipments.append(new Shipment(self.location, destination, self.agent_id))  # See (II)
 
 
 
 
-"""Ik heb twijfels over in hoeverre dit de gewenste vorm voor shipment is. Bovendien vraag ik me af of
-'self.location' goed meegenomen word en of dit hele gebeuren goed uitpakt in de run. Voordat ik het allemaal
-ga proberen te verwerken in run wacht ik even tot het doet wat het moet doen."""
+
+
+""" (II) I once again intiated with an empty list, but this time in the in the Producer class. I feel like I'm struggling with where I 
+should store the shipments."""
 
 
 
