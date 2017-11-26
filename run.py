@@ -4,6 +4,11 @@ from random import random
 from random import randint
 
 
+
+
+create_regions = Regions() #TODO confirm if it inherits properly from regions.py
+create_regions.create_region()
+
 auctioneer = Auctioneer()
 
 for _ in range(Config.run_length):  # run model!
@@ -16,3 +21,5 @@ for _ in range(Config.run_length):  # run model!
         auctioneer.register(agent)
 
 auctioneer.auction()
+
+
