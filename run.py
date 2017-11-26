@@ -6,8 +6,7 @@ from random import randint
 
 
 
-create_regions = Regions() #TODO confirm if it inherits properly from regions.py
-create_regions.create_region()
+create_regions()
 
 auctioneer = Auctioneer()
 

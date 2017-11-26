@@ -4,7 +4,7 @@ from random import randint
 from random import choice
 from config import Config
 from typing import NamedTuple
-from .regions import Regions
+from .regions import *
 
 
 class Seller(Agent):
@@ -16,8 +16,8 @@ class Seller(Agent):
         self.quantity = randint(*Config.quantity_range)
         self.item_price = randint(*Config.price_range)
         choose_subregion = choice(Regions().region)
-        self.location = [randint(*choose_subregion[0]),  # x axis
-                         randint(*choose_subregion[1])]  # y axis
+        self.location = [randint(*regions[choose_subregion_id].region()[0]), #TODO Confirm if 'regions' inherit in run
+                         randint(*regions[choose_subregion_id].region()[1])]
 
     def bid(self) -> NamedTuple:
         return self.Bid(action=BiddingTypes.SELL,
