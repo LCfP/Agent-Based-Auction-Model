@@ -6,6 +6,7 @@ from random import randint
 
 
 
+
 create_regions()
 
 auctioneer = Auctioneer()
