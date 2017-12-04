@@ -14,7 +14,7 @@ class Producer(Seller):
 
 
 
-
+as
 """Ik heb twijfels over in hoeverre dit de gewenste vorm voor shipment is. Bovendien vraag ik me af of
 'self.location' goed meegenomen word en of dit hele gebeuren goed uitpakt in de run. Voordat ik het allemaal
 ga proberen te verwerken in run wacht ik even tot het doet wat het moet doen."""
