@@ -73,3 +73,6 @@ class Auctioneer(object):
             if buyer.agent_id == agent_id:
                 self.buyers.remove(buyer)
                 # TODO After shipping: container registers at new location (= destination previous shipment)
+                sds
+
+                
