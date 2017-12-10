@@ -4,11 +4,8 @@ class Config(object):
     quantity_range = [100, 1500]  # again uniform?
     run_length = 250
     random_agent_creation = .05
-    number_of_regions = 4
-    number_of_subregions = 4
-    subregion_length = 50 #Which represents a 50x50 block in the x,y-diagram
-
-
+    dimension_regions = 3 #2 = 2x2, 3 = 3x3 etc.
+    region_length = 50 #Which represents a 50x50 block in the x,y-diagram
 
 
 
