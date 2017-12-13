@@ -4,6 +4,10 @@ from random import random
 from random import randint
 
 
+
+
+create_regions() 
+
 auctioneer = Auctioneer()
 
 for _ in range(Config.run_length):  # run model!
@@ -16,3 +20,5 @@ for _ in range(Config.run_length):  # run model!
         auctioneer.register(agent)
 
 auctioneer.auction()
+
+
