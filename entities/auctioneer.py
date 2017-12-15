@@ -1,83 +1,51 @@
-from .buyer import Buyer
-from .seller import Seller
-from operator import attrgetter
-from statistics import median
-from typing import List
+from .entity import Entity
+from enums import EntityTypes
 
 
-class Auctioneer(object):
+class Auctioneer(Entity):
 
-    def __init__(self, buyers: List[Buyer], sellers: List[Seller]):
-        self.buyers = buyers
-        self.sellers = sellers
+    def __init__(self, env, region):
+        self.env = env
+        self.region = region
+
+        self.type = EntityTypes.AUCTIONEER
+
+        self.entities = {}
 
     def auction(self):
         """
         Auctions with the buyers and sellers provided to this Auctioneer.
         """
+        raise NotImplementedError("TODO")
 
-        # List of all buyers and sellers:
-        print('+++ REGISTER +++')
-        print('Buyers:')
-        print('       ID            Q     P')
-        print('----------------  ------ -----')
-        fmt = '{:7} {:8} {:5}'
-        for buyer in self.buyers:
-            print(fmt.format(id(buyer), buyer.quantity, buyer.item_price))
+    def register(self, entity: Entity) -> int:
+        """
+        Registers an agent with this Auctioneer.
+        """
+        if entity.type not in self.entities.keys():
+            self.entities[entity.type] = {}
 
-        print('\nSellers:')
-        print('       ID            Q     P')
-        print('----------------  ------ -----')
-        for seller in self.sellers:
-            print(fmt.format(id(seller), seller.quantity, seller.item_price))
+        registration_key = self._registration(entity.type)
+        self.entities[entity.type][registration_key] = entity
 
+        return registration_key
 
-        # AUCTION ALGORITHM
-        # (1) SELLERS: determine total supply and median item price:
-        total_q_s = 0
-        auction_items = []
-        for seller in self.sellers:
-            total_q_s += seller.quantity
-            for i in range(seller.quantity):
-                auction_items.append(seller.item_price)
-        median_p_s = median(sorted(auction_items))
+    def unregister(self, type, registration_key) -> Entity:
+        """
+        Unregisters an agent from this Auctioneer, using the assigned
+        registration key.
+        """
+        if type not in self.entities.keys():
+            raise ValueError("Type `{0}' is not an understood entity!"
+                             .format(type))
 
-        # (2) BUYERS: determine total demand and median item price:
-        total_q_b = 0
-        auction_items_b = []
-        for buyer in self.buyers:
-            total_q_b += buyer.quantity
-            for j in range(buyer.quantity):
-                auction_items_b.append(buyer.item_price)
-        auction_items_b = sorted(auction_items_b, reverse=True)
-        median_p_b = median(auction_items_b[0:total_q_s])
+        return self.entities[type].pop(registration_key, default=False)
 
-        # (3) Determine auction price:
-        auction_price = (median_p_s + median_p_b) / 2
+    def _registration(self, type):
+        max_key = max(self.entities[type].keys(), default=0)
 
-        print('\n+++ AUCTION +++')
-        print("Total supply:        %s" % total_q_s)
-        print("Total demand:        %s" % total_q_b)
-        print("Median seller price:  %s" % median_p_s)
-        print("Median buyer price:   %s" % median_p_b)
-        print("Auction price:        %s" % auction_price)
+        for key in range(max_key):  # attempt to fill `holes'
+            if key not in self.entities[type].keys():
+                return key
 
-
-        # RESULTS
-        # Distribution of the auction items:
-        buyers = sorted(self.buyers, key=attrgetter('item_price'), reverse=True)
-
-        print('\n+++ RESULTS +++\nID buyer gets Q items:')
-        print('       ID            Q')
-        print('----------------  ------')
-        fmt = '{:7} {:8}'
-
-        for buyer in buyers:
-            if total_q_s >= buyer.quantity:
-                print(fmt.format(id(buyer), buyer.quantity))
-                total_q_s -= buyer.quantity
-            elif total_q_s > 0:
-                print(fmt.format(id(buyer), total_q_s))
-                total_q_s = 0
-            else:
-                print(fmt.format(id(buyer), 0))
+        return max_key + 1  # new key, one greater than the last
