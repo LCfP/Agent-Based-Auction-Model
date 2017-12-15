@@ -1,4 +1,5 @@
 from config import Config
+from entities import *
 
 
 class Environment(object):
@@ -11,5 +12,7 @@ class Environment(object):
         This method sets-up the initial distribution of the model, e.g. the
         first agents and other entities.
         """
-        pass
+        self.regions = [Region(self, region_id) for region_id in
+                        range(self.config.regions)]
 
+        # TODO: setup agents

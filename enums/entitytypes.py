@@ -8,4 +8,6 @@ class EntityTypes(Enum):
     AUCTIONEER = 0
     BUYER = 1
     SELLER = 2
-    AGENT = 3  # should not be used
+    CONTAINER = 4
+    PRODUCER = 5
+    SHIPMENT = 6

@@ -4,8 +4,9 @@ from enums import EntityTypes
 
 class Auctioneer(Entity):
 
-    def __init__(self, env):
+    def __init__(self, env, region):
         self.env = env
+        self.region = region
 
         self.type = EntityTypes.AUCTIONEER
 
