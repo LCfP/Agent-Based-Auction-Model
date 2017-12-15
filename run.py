@@ -1,18 +1,21 @@
 from entities import *
-from config import Config
+from environment import Environment
 from random import random
 from random import randint
 
 
-auctioneer = Auctioneer()
+environment = Environment()
+environment.setup()
 
-for _ in range(Config.run_length):  # run model!
-    if random() < Config.random_agent_creation:
-        _ = randint(1, 4)
-        if _ < 3:
-            agent = Buyer()
+auctioneer = Auctioneer(environment)
+
+for _ in range(environment.config.run_length):  # run model!
+    if random() < environment.config.random_agent_creation:
+        if randint(1, 4) < 3:
+            agent = Buyer(environment)
         else:
-            agent = Seller()
-        auctioneer.register(agent)
+            agent = Seller(environment)
+
+        agent.registration_id = auctioneer.register(agent)
 
 auctioneer.auction()

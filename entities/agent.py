@@ -1,7 +1,8 @@
 from collections import namedtuple
+from .entity import Entity
 
 
-class Agent(object):
+class Agent(Entity):
     Bid = namedtuple('Bid', ['action', 'quantity', 'item_price'])
 
     def bid(self):
