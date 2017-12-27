@@ -14,6 +14,8 @@ class Region(Entity):
 
         self.geography = self._geography()
 
+        print(self.geography)
+
     def draw_location(self):
         """
         Draws a random coordinate within this region's geography.
@@ -37,3 +39,4 @@ class Region(Entity):
                   (north_south + 1) * self.env.config.region_size]
 
         return [x_axis, y_axis]
+

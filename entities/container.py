@@ -12,6 +12,10 @@ class Container(Buyer):
 
         self.region = region
         self.location = region.draw_location()
+        self.id = 0
 
     def bid(self, item: Shipment):
         pass  # TODO
+        cost_empty_transport = item.location
+
+

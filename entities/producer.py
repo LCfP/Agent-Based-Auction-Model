@@ -14,6 +14,7 @@ class Producer(Seller):
 
         self.region = region
         self.location = region.draw_location()
+        self.id = 0
 
     def produce(self):
         shipments = []

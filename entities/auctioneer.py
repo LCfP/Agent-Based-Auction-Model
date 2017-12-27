@@ -25,6 +25,8 @@ class Auctioneer(Entity):
         if entity.type not in self.entities.keys():
             self.entities[entity.type] = {}
 
+            #self.entities[EntityTypes.SHIPMENT] (.values returns all values from dict)
+
         registration_key = self._registration(entity.type)
         self.entities[entity.type][registration_key] = entity
 
