@@ -12,6 +12,9 @@ class Auctioneer(Entity):
 
         self.entities = {}
 
+        self.auctionable_shipments = []
+        self.container_bids = []
+
     def auction(self):
         """
         Auctions with the buyers and sellers provided to this Auctioneer.
@@ -51,3 +54,6 @@ class Auctioneer(Entity):
                 return key
 
         return max_key + 1  # new key, one greater than the last
+
+    def list_shipment(self, bid):
+        self.auctionable_shipments.append(bid)

@@ -18,15 +18,8 @@ class Environment(object):
 
         # TODO: setup agents
         # setup containers
-        self.containers = []
-        for number in range(self.config.number_of_containers):
-            container = Container(self, choice(self.regions))
-            container.id = len(self.containers)
-            self.containers.append(container)
+        self.containers = [Container(self, choice(self.regions)) for _ in range(self.config.number_of_containers)]
 
-                # setup producers
-        self.producers = []
-        for number in range(self.config.number_of_producers):
-            producer = Producer(self, choice(self.regions))
-            producer.id = len(self.producers)
-            self.producers.append(producer)
+        # setup producers
+        self.producers = [Producer(self, choice(self.regions)) for _ in range(self.config.number_of_producers)]
+

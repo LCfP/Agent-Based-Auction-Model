@@ -1,6 +1,7 @@
 from .entity import Entity
 from .auctioneer import Auctioneer
 import numpy as np
+from enums import EntityTypes
 
 
 class Region(Entity):
@@ -14,7 +15,9 @@ class Region(Entity):
 
         self.geography = self._geography()
 
-        print(self.geography)
+        self.type = EntityTypes.REGION
+
+
 
     def draw_location(self):
         """

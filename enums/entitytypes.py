@@ -11,3 +11,4 @@ class EntityTypes(Enum):
     CONTAINER = 4
     PRODUCER = 5
     SHIPMENT = 6
+    REGION = 7
