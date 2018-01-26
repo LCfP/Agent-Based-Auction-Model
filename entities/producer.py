@@ -20,7 +20,8 @@ class Producer(Seller):
         self.location = region.draw_location()
         self.id = next(self._ids)
         self.storage = []
-        self.registered_shipments = []
+        self.account_value = self.env.config.producer_starting_account_value
+
 
     def produce(self):
     # I rewrote this function so shipments, when produced, are immediately put into storage
@@ -53,3 +54,10 @@ class Producer(Seller):
         producerbid = producerbid(registration_key = registrationkey,
                   biddingvalue = total_value)
         return producerbid
+
+    def pay_invoice(self,invoice):
+        '''created this function, because it seems weird to me that auctioneer
+        just withdraws money from the account of the producer.'''
+        payment_amount = invoice.amount_due
+        self.account_value -= payment_amount
+        return payment_amount

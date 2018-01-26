@@ -19,7 +19,9 @@ class Container(Buyer):
         self.location = region.draw_location()
         self.id = next(self._ids)
         self.state = ContainerState.EMPTY
-
+        self.account_value = self.env.config.container_starting_account_value
+        self.shipment_contracts = [] # list because in the future, containers could bid on shipments, when they are loaded
+        self.load = 0
 
     def create_bids(self, best_shipments, registrationkey):
         containerbid = namedtuple('containerbid', 'container_registration_key shipment_registration_key biddingvalue')
@@ -42,18 +44,13 @@ class Container(Buyer):
         if EntityTypes.__members__['SHIPMENT'] not in \
                 self.region.auctioneer.entities.keys(): # There are currently no shipments available
             return
-        else:
-            available_shipments = self.region.auctioneer.entities[EntityTypes.SHIPMENT]
-        return available_shipments # dict with shipment objects and their registration keys
+        return  self.region.auctioneer.entities[EntityTypes.SHIPMENT]# dict with shipment objects and their registration keys
 
     def select_best_shipments(self, available_shipments):
         ''' In the final model, the container should make transport reservations for each shipment it bids on,
         therefore the container places a limited number of bids. The container makes a selection based on the
         distance to the shipments. The closer a container is to a shipment, the lower it can bid.'''
-        def take_distance(elem):
-            return elem[1]
-
-        distance_to_shipments = [] # change to namedtuple to provide better insight in bid function?
+        distance_to_shipments = [] # change to namedtuple to provide better insight in create_bid function?
 
         for key in available_shipments.keys():
             shipment = self.region.auctioneer.entities[EntityTypes.SHIPMENT][key]
@@ -61,7 +58,7 @@ class Container(Buyer):
             registrationkey = key
             distance_to_shipments.append([registrationkey, distance, shipment])
 
-        distance_to_shipments.sort(key = take_distance)
+        distance_to_shipments.sort(key = lambda item: item[1])
         best_shipments = distance_to_shipments[:self.env.config.number_of_bids]
         return best_shipments
 
@@ -70,10 +67,9 @@ class Container(Buyer):
         is located. Next the container selects the shipments he wants to bid on. And finally the container
         constructs a set of bids'''
         available_shipments = self.request_shipments()
-        if available_shipments != None:
+        if available_shipments is not None:
             best_shipments = self.select_best_shipments(available_shipments)
             container_bids = self.create_bids(best_shipments,registrationkey)
             return container_bids
-        else:
-            container_bids = []
-            return container_bids
+
+        return []

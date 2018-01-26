@@ -1,5 +1,5 @@
 from .entity import Entity
-from enums import EntityTypes
+from enums import EntityTypes, ShipmentState
 
 
 class Shipment(Entity):
@@ -12,5 +12,5 @@ class Shipment(Entity):
         self.region = region
 
         self.type = EntityTypes.SHIPMENT
-
+        self.state = ShipmentState.STORAGED
         # TODO: a shipment is more than just this. It contains products!
