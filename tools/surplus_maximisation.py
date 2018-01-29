@@ -8,10 +8,9 @@ def surplus_maximisation(container_bids,auctionable_shipments):
     if check == 1:
         surplus_array = create_surplus_array(container_bids,auctionable_shipments)
         matches = maximisation_solver(surplus_array, container_bids, auctionable_shipments)
-        return matches
-
-    else:
-        return
+        if len(matches) > 0:
+            return matches
+    return
 
 def maximisation_solver(surplus_array, container_bids, auctionable_shipments):
     solver = pywraplp.Solver('SolveAssignmentProblemMIP',

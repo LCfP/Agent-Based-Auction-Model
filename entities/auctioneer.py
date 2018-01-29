@@ -63,26 +63,24 @@ class Auctioneer(Entity):
         self.auctionable_shipments.append(producer_bid)
 
     def unlist_shipment(self,shipment_registration_key):
-        for producer_bid in self.auctionable_shipments:
-            if producer_bid.registration_key == shipment_registration_key:
-                self.auctionable_shipments.remove(producer_bid)
+        self.auctionable_shipments[:] = [producer_bid for producer_bid in self.auctionable_shipments
+                                         if producer_bid.registration_key != shipment_registration_key]
 
     def list_container_bid(self, container_bid):
         self.container_bids.append(container_bid)
 
     def unlist_container_bid(self, container_registration_key):
-        for container_bid in self.container_bids:
-            if container_bid.container_registration_key == container_registration_key:
-                self.container_bids.remove(container_bid)
+        self.container_bids[:] = [container_bid for container_bid in self.container_bids
+                                  if container_bid.container_registration_key != container_registration_key]
 
     def match_containers_shipments(self):
         matches = surplus_maximisation(self.container_bids,self.auctionable_shipments)
         return matches
 
     def invoice_producers(self, matches):
-        '''The auctioneer invoices the producer from the matched shipment.
+        ''' The auctioneer invoices the producer from the matched shipment.
             In the current situation, the auctioneer does not obtain part of the surplus.
-            Unlisting bids from auctionable_shipments happens later, creates error in for loop'''
+        '''
         invoices = []
         invoice = namedtuple('invoice', 'producer_id amount_due')
         if matches is not None: # required because if len = 0 the for loop will produce an error
@@ -100,7 +98,7 @@ class Auctioneer(Entity):
 
     def pay_container(self,matches):
         # pay the container
-        if matches is not None:  # required because if len = 0 the for loop will produce an error
+        if matches is not None:  #
             for match in matches:
                 container = self.entities[EntityTypes.CONTAINER][match.container_registration_key]
                 for container_bid in self.container_bids:
@@ -113,8 +111,6 @@ class Auctioneer(Entity):
 
         return
 
-    #TODO make functions that unregister container and shipments after payment, and unlist items
-    #TODO change container state when container wins shipment
 
     def finalize_matchmaking(self,matches):
         '''I made a seperate function to unregister both container and shipments, otherwise it messes up the
@@ -125,7 +121,7 @@ class Auctioneer(Entity):
                 shipment = self.unregister(EntityTypes.SHIPMENT, match.shipment_registration_key)
                 shipment.state = ShipmentState.AWAITING_PICKUP
                 container = self.unregister(EntityTypes.CONTAINER,match.container_registration_key)
-                container.state = ContainerState.PICKUP
+                container.state = ContainerState.NEEDING_TRANSPORT
                 container.shipment_contracts.append(shipment)
                 self.unlist_shipment(match.shipment_registration_key)
                 self.unlist_container_bid(match.container_registration_key)

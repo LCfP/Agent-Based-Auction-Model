@@ -45,7 +45,7 @@ def determine_route(env, item1_coordinates, item2_coordinates):
         route = [startcoords, endcoords]
         return route
     else:
-        ''''When moving cross regions, the region hubs have to be used'''
+        '''When moving cross regions, the region hubs have to be used'''
         startcoords = item1_coordinates
         starthubcoords = find_hub_coordinates(item1_region)
         endhubcoords = find_hub_coordinates(item2_region)
@@ -62,3 +62,6 @@ def route_euclidean_distance(env, item1_coordinates, item2_coordinates):
         distance = euclidean_distance(startcoords,endcoords)
         total_distance += distance
     return total_distance
+
+# sum(euclidean_distance(*route[location:location + 2]) for location in range(len(route) - 1))
+# should the location + 2 not be lcoation + 1 ???

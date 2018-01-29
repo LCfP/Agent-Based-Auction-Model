@@ -12,3 +12,4 @@ class EntityTypes(Enum):
     PRODUCER = 5
     SHIPMENT = 6
     REGION = 7
+    TRANSPORTER = 8

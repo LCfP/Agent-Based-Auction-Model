@@ -23,3 +23,5 @@ class Environment(object):
         # setup producers
         self.producers = [Producer(self, choice(self.regions)) for _ in range(self.config.number_of_producers)]
 
+        # setup transport company (currently only 1 transport company)
+        self.transportcompany = Transportcompany(self)
