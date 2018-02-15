@@ -9,20 +9,27 @@ class Transportcompany(Entity):
     def __init__(self, env):
         self.env = env
         self.transporters = [Transporter(self.env, choice(self.env.regions))
-                             for _ in range(self.env.config.number_of_transporters)]
+                             for _ in
+                             range(self.env.config.number_of_transporters)]
 
     def find_closest_transporter(self, container):
-        available_transporters = [transporter for transporter in self.transporters
-                                  if transporter.state == TransporterState.EMPTY]
+        available_transporters = [transporter for transporter in
+                                  self.transporters if transporter.state ==
+                                  TransporterState.EMPTY]
 
         if len(available_transporters) > 0:
-            closest_distance_to_pickup = [route_euclidean_distance(self.env, container.location,
-                                                                   available_transporters[0].location),
-                                          available_transporters[0]]
+            closest_distance_to_pickup = \
+                [route_euclidean_distance(self.env, container.location,
+                                            available_transporters[0].location),
+                 available_transporters[0]]
             for transporter in available_transporters:
-                distance_to_pickup = route_euclidean_distance(self.env,container.location,transporter.location)
+                distance_to_pickup = \
+                    route_euclidean_distance(self.env,
+                                             container.location,
+                                             transporter.location)
                 if distance_to_pickup < closest_distance_to_pickup[0]:
-                    closest_distance_to_pickup = [distance_to_pickup,transporter]
+                    closest_distance_to_pickup = \
+                        [distance_to_pickup,transporter]
             return closest_distance_to_pickup[1]
         return
 
@@ -34,6 +41,8 @@ class Transportcompany(Entity):
                 if transporter == closest_transporter:
                     transporter.state = TransporterState.PICKUP
                     transporter.transport_contract.append(container)
-                    transporter.route_length = route_euclidean_distance(self.env,container.location,transporter.location)
+                    transporter.route_length = \
+                        route_euclidean_distance(self.env,container.location,
+                                                 transporter.location)
                     container.state = ContainerState.AWAITING_TRANSPORT
         return

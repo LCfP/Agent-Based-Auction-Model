@@ -2,19 +2,22 @@ from __future__ import print_function
 from ortools.linear_solver import pywraplp
 from collections import Counter, namedtuple
 from operator import attrgetter
+from config import Config
+import numpy as np
 
-def surplus_maximisation(container_bids,auctionable_shipments):
-    check = check_matching_possibility(container_bids,auctionable_shipments)
-    if check == 1:
-        surplus_array = create_surplus_array(container_bids,auctionable_shipments)
-        matches = maximisation_solver(surplus_array, container_bids, auctionable_shipments)
+def surplus_maximisation(container_bids, auctionable_shipments):
+    if len(container_bids) > 0 and len(auctionable_shipments) > 0:
+        surplus_array = create_surplus_array(container_bids,
+                                             auctionable_shipments)
+        matches = maximisation_solver(surplus_array, container_bids,
+                                      auctionable_shipments)
         if len(matches) > 0:
             return matches
-    return
+    return None # toekennen als je none wilt gebruiken
 
 def maximisation_solver(surplus_array, container_bids, auctionable_shipments):
     solver = pywraplp.Solver('SolveAssignmentProblemMIP',
-                             pywraplp.Solver.CBC_MIXED_INTEGER_PROGRAMMING)
+                             pywraplp.Solver.GLOP_LINEAR_PROGRAMMING)
 
     # Setup data for solver
     surplus = surplus_array
@@ -22,9 +25,16 @@ def maximisation_solver(surplus_array, container_bids, auctionable_shipments):
     num_shipments = len(surplus[0])
     x = {}
 
+    if Config.surplus_tool_debug is True:
+        print(" \n number of containers in surplus matrix: %s \n"
+              "number of shipments in surplus matrix: %s \n"
+              %(num_containers,num_shipments))
+        print("surplus array")
+        print(np.array(surplus))
+
     for i in range(num_containers):
         for j in range(num_shipments):
-            x[i, j] = solver.BoolVar('x[%i,%i]' % (i, j))
+            x[i, j] = solver.BoolVar('x[%i,%i]' % (i, j)) # "x[{0}, {1}]".format(i, j)
 
     # Objective
     solver.Maximize(solver.Sum([surplus[i][j] * x[i, j] for i in range(num_containers)
@@ -56,19 +66,15 @@ def maximisation_solver(surplus_array, container_bids, auctionable_shipments):
                               shipment_registration_key= shipment_key,
                               surplus = surplus[i][j])
                 matches.append(new_match)
-                '''print('Container %d with key %d, is assigned to shipment %d with key %d.  surplus = %d' % (
+                if Config.surplus_tool_debug is True:
+                    print('Container in row %d with registration key %d, '
+                          'is assigned to shipment in column %d '
+                          'with registration key %d.  surplus = %d' % (
                     i, container_key,
                     j, shipment_key,
-                    surplus[i][j]))''' # remove when there are certainly no bugs anymore
+                    surplus[i][j]))
 
     return matches
-
-
-def check_matching_possibility(container_bids, auctionable_shipments):
-    if len(container_bids) > 0 and len(auctionable_shipments) > 0:
-        return 1 # TODO create enum for yes or no matching possibility ?
-    else:
-        return 0
 
 
 def group_container_bids(container_bids):

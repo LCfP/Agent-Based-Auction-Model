@@ -7,3 +7,4 @@ from .container import Container
 from .region import Region
 from .transportcompany import Transportcompany
 from .transporter import Transporter
+from .consumer import Consumer

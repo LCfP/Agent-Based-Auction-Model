@@ -2,6 +2,7 @@ from .entity import Entity
 from enums import EntityTypes, TransporterState, ContainerState, ShipmentState
 from itertools import count
 from tools import route_euclidean_distance, find_region
+from types import SimpleNamespace
 
 class Transporter(Entity): #or name it truck?
     _ids = count(0)
@@ -12,7 +13,9 @@ class Transporter(Entity): #or name it truck?
         self.region = region
         self.location = region.draw_location() # could be changed to location of hubs in the region
         self.id = next(self._ids) # maybe not needed...
-
+        self.data = SimpleNamespace()
+        # roep in de init de _data() functie aan om alle waardes toe te kennen.
+        # Vervang alle onderstaande variabelen
         self.account_value = 0 #TODO add payment for transport by container
         self.state = TransporterState.EMPTY
         self.load = 0 # this attribute stores the container it is transporting
@@ -23,6 +26,7 @@ class Transporter(Entity): #or name it truck?
 
         self.deliveries = 0 #TODO remove after debugging
 
+    # functie aanmaken _data() --> alle variabelen hierin aanmaken en waardes geven
     def update_location(self):
         ''' Would be nice to update the location of the transporter
         during his transport (after unit time in run file)'''
@@ -49,8 +53,8 @@ class Transporter(Entity): #or name it truck?
                                                              self.load.shipment_contracts[0].location)
                 # update container info
                 self.transport_contract[0].state = ContainerState.PICKUP
-                return
-            if self.state == TransporterState.TRANSPORTING and \
+
+            elif self.state == TransporterState.TRANSPORTING and \
                 self.load.state == ContainerState.PICKUP: # transporter reached container's shipment pick up location
 
                 # update transporter info
@@ -67,8 +71,8 @@ class Transporter(Entity): #or name it truck?
                 self.load.load.state = ShipmentState.ON_ROUTE
                 # update producer info
                 self.env.producers[self.load.load.producer_id].storage.remove(self.load.load) # remove picked up shipment from producer's storage
-                return
-            if self.state == TransporterState.TRANSPORTING and \
+
+            elif self.state == TransporterState.TRANSPORTING and \
                 self.load.state == ContainerState.DELIVERING: # transporter reach container's shipments destination
 
                 # update transporter info (1)
@@ -76,6 +80,8 @@ class Transporter(Entity): #or name it truck?
                 self.location = self.load.load.destination
                 # update shipment info
                 self.load.load.state = ShipmentState.DELIVERED
+                # update consumer info
+                self.env.consumer.products.append(self.load.load)
                 # update container info
                 self.load.region = self.region
                 self.load.location = self.location
@@ -88,8 +94,8 @@ class Transporter(Entity): #or name it truck?
                 self.state = TransporterState.EMPTY
                 self.route_length = 0 # reset route_length
                 self.deliveries += 1
-                return
-        return
+
+
 
 
 

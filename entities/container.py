@@ -22,6 +22,7 @@ class Container(Buyer):
         self.account_value = self.env.config.container_starting_account_value
         self.shipment_contracts = [] # list because in the future, containers could bid on shipments, when they are loaded
         self.load = 0
+        self.idle_days = 0
 
     def create_bids(self, best_shipments, registrationkey):
         containerbid = namedtuple('containerbid', 'container_registration_key shipment_registration_key biddingvalue')
@@ -41,7 +42,7 @@ class Container(Buyer):
 
     def request_shipments(self):
         #TODO add functionality of selecting shipments from auctions outside current region
-        if EntityTypes.__members__['SHIPMENT'] not in \
+        if EntityTypes.SHIPMENT not in \
                 self.region.auctioneer.entities.keys(): # There are currently no shipments available
             return
         return  self.region.auctioneer.entities[EntityTypes.SHIPMENT]# dict with shipment objects and their registration keys
@@ -50,7 +51,7 @@ class Container(Buyer):
         ''' In the final model, the container should make transport reservations for each shipment it bids on,
         therefore the container places a limited number of bids. The container makes a selection based on the
         distance to the shipments. The closer a container is to a shipment, the lower it can bid.'''
-        distance_to_shipments = [] # change to namedtuple to provide better insight in create_bid function?
+        distance_to_shipments = []
 
         for key in available_shipments.keys():
             shipment = self.region.auctioneer.entities[EntityTypes.SHIPMENT][key]
@@ -60,6 +61,12 @@ class Container(Buyer):
 
         distance_to_shipments.sort(key = lambda item: item[1])
         best_shipments = distance_to_shipments[:self.env.config.number_of_bids]
+
+        if self.env.config.debug is True and self.id < 1:
+            print("\n", distance_to_shipments)
+            print("from this list, the container should select the %s "
+                  "closest shipments" %(self.env.config.number_of_bids))
+            print(best_shipments, "\n")
         return best_shipments
 
     def bidding_proces(self,registrationkey):
@@ -70,6 +77,28 @@ class Container(Buyer):
         if available_shipments is not None:
             best_shipments = self.select_best_shipments(available_shipments)
             container_bids = self.create_bids(best_shipments,registrationkey)
+
+            if self.env.config.debug is True and self.region.id < 1:
+                print("container %s in region %s enters the bids %s"
+                      %(self.id, self.region.id, container_bids))
+
             return container_bids
 
+        if self.env.config.debug is True and self.region.id < 1:
+            print("there are no shipments available in region %s"
+                  %(self.region.id))
         return []
+
+    def losing_auction_response(self):
+        if self.idle_days < self.env.config.idle_max:
+            for key in \
+                    self.region.auctioneer.entities[EntityTypes.CONTAINER]:
+                if self.region.auctioneer.entities[EntityTypes.CONTAINER][
+                    key].id \
+                        == self.id:
+                    registrationkey = key
+            self.region.auctioneer.unregister(self.type, registrationkey)
+            self.region.auctioneer.unlist_container_bid(registrationkey)
+            self.idle_days += 1
+
+        #TODO when container is longer idle request transport to hub

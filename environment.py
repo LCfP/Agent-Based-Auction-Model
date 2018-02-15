@@ -16,7 +16,7 @@ class Environment(object):
         self.regions = [Region(self, region_id) for region_id in
                         range(self.config.regions)]
 
-        # TODO: setup agents
+
         # setup containers
         self.containers = [Container(self, choice(self.regions)) for _ in range(self.config.number_of_containers)]
 
@@ -25,3 +25,5 @@ class Environment(object):
 
         # setup transport company (currently only 1 transport company)
         self.transportcompany = Transportcompany(self)
+
+        self.consumer = Consumer(self)

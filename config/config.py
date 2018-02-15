@@ -2,17 +2,15 @@ from numpy.random import randint
 
 
 class Config(object):
-    price_range = [0, 10]  # say for a uniform distribution
-    quantity_range = [100, 1500]  # again uniform?
-    run_length = 10
-    random_agent_creation = .05
 
+    run_length = 2
     regions = 9  # should *always* be a square map
     region_size = 50  # each region is itself square
 
     transport_cost = 1
 
-    number_of_bids = 3
+    number_of_bids = 3 # number of container bids
+    idle_max = 3 # number of days before container repositions to hub
 
     number_of_containers = 40
     number_of_producers = 20
@@ -25,6 +23,11 @@ class Config(object):
     producer_starting_account_value = 1000
 
     transport_speed = 30
+    storage_capacity = 20
+    storage_urgency_level = 0.5
+
+    debug = False
+    surplus_tool_debug = False
 
     @staticmethod
     def producer_production_rate():
