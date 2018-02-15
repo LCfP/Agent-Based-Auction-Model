@@ -73,7 +73,7 @@ class Producer(Seller):
         else: shipping_urgency_cost = 0
         #TODO add standard fees for container functionalties
         total_value = transport_cost_from_hub + transport_cost_to_destination \
-                      + shipping_urgency_cost
+                      + shipping_urgency_cost + 1
 
         producerbid = producerbid(registration_key = registrationkey,
                                     biddingvalue = total_value)

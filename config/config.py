@@ -3,7 +3,7 @@ from numpy.random import randint
 
 class Config(object):
 
-    run_length = 2
+    run_length = 5
     regions = 9  # should *always* be a square map
     region_size = 50  # each region is itself square
 

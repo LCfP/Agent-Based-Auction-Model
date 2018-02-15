@@ -158,33 +158,12 @@ class Auctioneer(Entity):
                 #TODO wit regels toevoegen tussen verschillende blokken
                 container = self.unregister(EntityTypes.CONTAINER,match.container_registration_key)
                 container.state = ContainerState.NEEDING_TRANSPORT
+                container.idle_days = 1 # reset to initial setting
                 container.shipment_contracts.append(shipment)
                 self.unlist_shipment(match.shipment_registration_key)
                 self.unlist_container_bid(match.container_registration_key)
 
         return
-
-    def calculate_matching_distance(self,matches):
-        if matches is None:
-            return
-
-        matching_distances = []
-        for match in matches:
-            # first determine container location
-            for key in self.entities[EntityTypes.CONTAINER]:
-                if match.container_registration_key == key:
-                    container_location = \
-                        self.entities[EntityTypes.CONTAINER][key].location
-            # determine shipment location
-            for key in self.entities[EntityTypes.SHIPMENT]:
-                if match.shipment_registration_key == key:
-                    shipment_location = \
-                        self.entities[EntityTypes.SHIPMENT][key].location
-            match_distance = route_euclidean_distance(self.env,
-                                                      container_location,
-                                                      shipment_location)
-            matching_distances.append(match_distance)
-        return matching_distances
 
     def print_shipment_bid_info(self):
         if EntityTypes.SHIPMENT not in self.entities.keys():

@@ -1,7 +1,7 @@
 from .entity import Entity
 from enums import EntityTypes, TransporterState, ContainerState, ShipmentState
 from itertools import count
-from tools import route_euclidean_distance, find_region
+from tools import route_euclidean_distance, find_region, find_hub_coordinates
 from types import SimpleNamespace
 
 class Transporter(Entity): #or name it truck?
@@ -12,7 +12,7 @@ class Transporter(Entity): #or name it truck?
         self.type = EntityTypes.TRANSPORTER
         self.region = region
         self.location = region.draw_location() # could be changed to location of hubs in the region
-        self.id = next(self._ids) # maybe not needed...
+        self.id = next(self._ids)
         self.data = SimpleNamespace()
         # roep in de init de _data() functie aan om alle waardes toe te kennen.
         # Vervang alle onderstaande variabelen
@@ -39,23 +39,32 @@ class Transporter(Entity): #or name it truck?
 
 
     def status_update(self):
-        '''The transporter only updates information when he has reached a goal. The transporter
-        can carry both a container (self.load)  and a shipment(in the container = self.load.load).'''
-        if self.route_length <= 0 and len(self.transport_contract)> 0: # transporter reached its goal
-            if self.state == TransporterState.PICKUP: # transporter reached empty container
+        '''The transporter only updates information when he has reached a goal.
+        The transporter can carry both a container (self.load) and a shipment
+        (in the container = self.load.load).'''
+
+        # transporter reached its goal
+        if self.route_length <= 0 and len(self.transport_contract)> 0:
+
+            # transporter reached empty container
+            if self.state == TransporterState.PICKUP and \
+                self.transport_contract[0].state == \
+                            ContainerState.AWAITING_TRANSPORT:
 
                 # update transporter info
                 self.region = self.transport_contract[0].region
                 self.location = self.transport_contract[0].location
                 self.state = TransporterState.TRANSPORTING
                 self.load = self.transport_contract[0]
-                self.route_length = route_euclidean_distance(self.env, self.location,
-                                                             self.load.shipment_contracts[0].location)
+                self.route_length = route_euclidean_distance(self.env,
+                                       self.location,
+                                       self.load.shipment_contracts[0].location)
                 # update container info
                 self.transport_contract[0].state = ContainerState.PICKUP
 
+            # transporter reached container's shipment pick up location
             elif self.state == TransporterState.TRANSPORTING and \
-                self.load.state == ContainerState.PICKUP: # transporter reached container's shipment pick up location
+                self.load.state == ContainerState.PICKUP:
 
                 # update transporter info
                 self.region = self.load.shipment_contracts[0].region # region of shipment
@@ -72,8 +81,9 @@ class Transporter(Entity): #or name it truck?
                 # update producer info
                 self.env.producers[self.load.load.producer_id].storage.remove(self.load.load) # remove picked up shipment from producer's storage
 
+            # transporter reach container's shipments destination
             elif self.state == TransporterState.TRANSPORTING and \
-                self.load.state == ContainerState.DELIVERING: # transporter reach container's shipments destination
+                self.load.state == ContainerState.DELIVERING:
 
                 # update transporter info (1)
                 self.region = find_region(self.env, self.load.load.destination)
@@ -95,7 +105,46 @@ class Transporter(Entity): #or name it truck?
                 self.route_length = 0 # reset route_length
                 self.deliveries += 1
 
+            # Transporter reached empty container in need of relocating
+            elif self.state == TransporterState.PICKUP and \
+                self.transport_contract[0].state == \
+                            ContainerState.AWAITING_RELOCATION:
 
+                # update transporter info
+                self.region = self.transport_contract[0].region
+                self.location = self.transport_contract[0].location
+                self.state = TransporterState.TRANSPORTING
+                self.load = self.transport_contract[0]
+                # To from container location to region hub
+                self.route_length = route_euclidean_distance(self.env,
+                                       self.location,
+                                       find_hub_coordinates(self.region))
+                # update container info
+                self.transport_contract[0].state = ContainerState.RELOCATING
+
+                if self.env.config.debug is True:
+                    print("Container % is picked up and will be relocated"
+                          % (self.load.id))
+
+            # Transporter reached hub of relocating container
+            elif self.state == TransporterState.TRANSPORTING and \
+                self.load.state == ContainerState.RELOCATING:
+
+                if self.env.config.debug is True:
+                    print("Container % is dropped of at the hub of region %s "
+                          %(self.load.id, self.region))
+
+                # update transporter info (1)
+                # region is still the same
+                self.location = find_hub_coordinates(self.region)
+                # update container info
+                self.load.region = self.region
+                self.load.location = self.location
+                self.load.state = ContainerState.EMPTY
+                # update transporter info (2)
+                self.transport_contract.remove(self.load)
+                self.load = 0
+                self.state = TransporterState.EMPTY
 
 
 

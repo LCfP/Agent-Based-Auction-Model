@@ -44,5 +44,15 @@ class Transportcompany(Entity):
                     transporter.route_length = \
                         route_euclidean_distance(self.env,container.location,
                                                  transporter.location)
-                    container.state = ContainerState.AWAITING_TRANSPORT
+
+                    if container.state == ContainerState.NEEDING_TRANSPORT:
+                        container.state = ContainerState.AWAITING_TRANSPORT
+
+                    elif container.state == ContainerState.RELOCATION_NEED:
+                        container.state = ContainerState.AWAITING_RELOCATION
+
+                        if self.env.config.debug is True:
+                            print("Transporter %s is assigned to pickup "
+                                  "container %s that is in need of relocation"
+                                  %(transporter.id, container.id))
         return

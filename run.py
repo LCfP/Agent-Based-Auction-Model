@@ -2,6 +2,7 @@ from environment import Environment
 from enums import EntityTypes, ContainerState, ShipmentState
 import pandas as pd
 from tools import gathering_shipmentinfo, calculate_matching_distance
+from analysis import states_analysis
 
 
 environment = Environment()
@@ -18,6 +19,7 @@ for day in range(environment.config.run_length):  # run model!
         print(" \n \033[1m start of day %s" %(day))
         print('\033[0m')
 
+    # Transportation "during" the day
     for transporter in environment.transportcompany.transporters:
         transporter.move()
         transporter.status_update()
@@ -108,6 +110,9 @@ for day in range(environment.config.run_length):  # run model!
     for container in environment.containers:
         if container.state == ContainerState.EMPTY:
             container.losing_auction_response()
+        # when container is not matched after x number of days, he relocates
+        if container.state == ContainerState.RELOCATION_NEED:
+            environment.transportcompany.assign_transporter(container)
 
     # END OF DAILY SIMULATION ACTIONS
 
@@ -118,12 +123,12 @@ for day in range(environment.config.run_length):  # run model!
         else:
             containerinfo[container.id].append(container.state)
 
+    # store shipment state info in dict
     shipmentinfo = gathering_shipmentinfo(shipmentinfo,environment,day)
 
 
 # Create dataframe for containerinfo
 containerinfo_df = pd.DataFrame(containerinfo)
-print(containerinfo_df)
 
 # Rewrite shipment info dict
 for key in shipmentinfo:
@@ -131,22 +136,13 @@ for key in shipmentinfo:
                                   index=shipmentinfo[key][1])
 # Create dataframe for shipmentinfo
 shipmentinfo_df = pd.DataFrame(shipmentinfo)
-print(shipmentinfo_df)
 
 # matching distance
-print(matching_distances)
+print("number of matches:")
 print(len(matching_distances))
-
-# Data analysis
-container_idletimes = []
-for container_id in containerinfo_df:
-    idletime = (containerinfo_df[container_id] == ContainerState.EMPTY).sum()  \
-                / len(containerinfo_df[container_id])
-    container_idletimes.append(idletime)
+print("average match distance:")
+print(sum(matching_distances)/len(matching_distances))
 
 
-
-
-
-
-
+states_analysis(containerinfo_df, ContainerState)
+states_analysis(shipmentinfo_df, ShipmentState)

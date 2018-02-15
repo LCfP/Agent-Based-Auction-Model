@@ -2,7 +2,7 @@ from .buyer import Buyer
 from .shipment import Shipment
 from enums import EntityTypes, ContainerState
 from itertools import count
-from tools import route_euclidean_distance, euclidean_distance
+from tools import route_euclidean_distance, find_hub_coordinates
 from collections import namedtuple
 
 
@@ -22,7 +22,7 @@ class Container(Buyer):
         self.account_value = self.env.config.container_starting_account_value
         self.shipment_contracts = [] # list because in the future, containers could bid on shipments, when they are loaded
         self.load = 0
-        self.idle_days = 0
+        self.idle_days = 1 # checked at end of day, therefore initially 1 day idle
 
     def create_bids(self, best_shipments, registrationkey):
         containerbid = namedtuple('containerbid', 'container_registration_key shipment_registration_key biddingvalue')
@@ -90,7 +90,17 @@ class Container(Buyer):
         return []
 
     def losing_auction_response(self):
-        if self.idle_days < self.env.config.idle_max:
+        if self.env.config.debug is True:
+            print("Container %s is still empty and undertakes action"
+                  %(self.id))
+
+        # Case when container is somewhere in region
+        if self.idle_days <= self.env.config.idle_max:
+
+            if self.env.config.debug is True:
+                print("Container %s is idle for %s day(s) and therefore "
+                      "un-registers itself"%(self.id, self.idle_days))
+
             for key in \
                     self.region.auctioneer.entities[EntityTypes.CONTAINER]:
                 if self.region.auctioneer.entities[EntityTypes.CONTAINER][
@@ -101,4 +111,30 @@ class Container(Buyer):
             self.region.auctioneer.unlist_container_bid(registrationkey)
             self.idle_days += 1
 
-        #TODO when container is longer idle request transport to hub
+        # Case when container is idle at a hub location
+        elif self.location == find_hub_coordinates(self.region):
+
+            if self.env.config.debug is True:
+                print("Container %s is idle at hub and un-registers itself"
+                      %(self.id))
+
+            for key in \
+                    self.region.auctioneer.entities[EntityTypes.CONTAINER]:
+                if self.region.auctioneer.entities[EntityTypes.CONTAINER][
+                    key].id \
+                        == self.id:
+                    registrationkey = key
+            self.region.auctioneer.unregister(self.type, registrationkey)
+            self.region.auctioneer.unlist_container_bid(registrationkey)
+
+        # Relocation initiation
+        else:
+            if self.location != find_hub_coordinates(self.region):
+                self.state = ContainerState.RELOCATION_NEED
+
+                if self.env.config.debug is True:
+                    print("Container %s is idle for %s days and therefore "
+                          "initiates relocation to a hub"
+                          %(self.id, self.idle_days))
+
+        # TODO check for bugs

@@ -6,3 +6,6 @@ class ContainerState(Enum):
     AWAITING_TRANSPORT = 2
     PICKUP = 3 # Container has won shipment but still has to pickup the shipment
     DELIVERING = 4 # Container is loaded and on his way to the shipment destination
+    RELOCATION_NEED = 5
+    AWAITING_RELOCATION = 6
+    RELOCATING = 7
