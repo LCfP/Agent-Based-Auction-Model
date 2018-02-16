@@ -3,14 +3,14 @@ from numpy.random import randint
 
 class Config(object):
 
-    run_length = 5
+    run_length = 3
     regions = 9  # should *always* be a square map
     region_size = 50  # each region is itself square
 
     transport_cost = 1
 
-    number_of_bids = 3 # number of container bids
-    idle_max = 3 # number of days before container repositions to hub
+    number_of_bids = 3  # number of container bids
+    idle_max = 3  # number of days before container repositions to hub
 
     number_of_containers = 40
     number_of_producers = 20

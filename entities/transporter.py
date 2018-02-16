@@ -79,6 +79,7 @@ class Transporter(Entity): #or name it truck?
                 # update shipment info
                 self.load.load.state = ShipmentState.ON_ROUTE
                 # update producer info
+
                 self.env.producers[self.load.load.producer_id].storage.remove(self.load.load) # remove picked up shipment from producer's storage
 
             # transporter reach container's shipments destination
