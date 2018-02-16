@@ -103,3 +103,6 @@ class Producer(Seller):
                                      "invoice value", "shipment id",
                                      "account value after payment"]))
         return payment_amount
+
+    def __str__(self):
+        return str((self.id, self.region, self.location, len(self.storage)))

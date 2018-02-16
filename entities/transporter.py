@@ -81,6 +81,7 @@ class Transporter(Entity): #or name it truck?
 
                 # TODO rewrite to list comprehension
                 # update producer info
+
                 self.env.producers[self.load.load.producer_id].storage.remove(self.load.load) # remove picked up shipment from producer's storage
 
             # transporter reach container's shipments destination
