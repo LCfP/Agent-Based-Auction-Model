@@ -1,8 +1,8 @@
 from environment import Environment
-from enums import EntityTypes, ContainerState, ShipmentState
+from enums import EntityTypes, ContainerState, ShipmentState, TransporterState
 import pandas as pd
 from tools import gathering_shipmentinfo, calculate_matching_distance
-from analysis import states_analysis
+from analysis import states_analysis, storage_utilisation
 
 
 environment = Environment()
@@ -11,6 +11,8 @@ environment.setup()
 #KPI data storage
 containerinfo = {}
 shipmentinfo = {}
+transporterinfo = {}
+producer_storage_info = {}
 matching_distances = []
 
 for day in range(environment.config.run_length):  # run model!
@@ -126,6 +128,22 @@ for day in range(environment.config.run_length):  # run model!
     # store shipment state info in dict
     shipmentinfo = gathering_shipmentinfo(shipmentinfo,environment,day)
 
+    # store container state info in dict
+    for transporter in environment.transportcompany.transporters:
+        if transporter.id not in transporterinfo.keys():
+            transporterinfo[transporter.id] = [transporter.state]
+        else:
+            transporterinfo[transporter.id].append(transporter.state)
+
+    # store producer storage utilisation level in dict
+    for producer in environment.producers:
+        if producer.id not in producer_storage_info.keys():
+            producer_storage_info[producer.id] = \
+                [len(producer.storage) / environment.config.storage_capacity]
+        else:
+            producer_storage_info[producer.id].append(
+                len(producer.storage) / environment.config.storage_capacity)
+
 
 # Create dataframe for containerinfo
 containerinfo_df = pd.DataFrame(containerinfo)
@@ -137,6 +155,12 @@ for key in shipmentinfo:
 # Create dataframe for shipmentinfo
 shipmentinfo_df = pd.DataFrame(shipmentinfo)
 
+# Create dataframe for transporterinfo
+transporterinfo_df = pd.DataFrame(transporterinfo)
+
+# Create dataframe for producer storage utilisation info
+producer_storage_info_df = pd.DataFrame(producer_storage_info)
+
 # matching distance
 print("number of matches:")
 print(len(matching_distances))
@@ -146,3 +170,7 @@ print(sum(matching_distances)/len(matching_distances))
 
 states_analysis(containerinfo_df, ContainerState)
 states_analysis(shipmentinfo_df, ShipmentState)
+states_analysis(transporterinfo_df, TransporterState)
+
+storage_utilisation(producer_storage_info_df)
+

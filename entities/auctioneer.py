@@ -1,6 +1,6 @@
 from .entity import Entity
 from enums import EntityTypes, ContainerState, ShipmentState
-from tools import surplus_maximisation, route_euclidean_distance
+from tools import surplus_maximisation
 from collections import namedtuple
 from tabulate import tabulate
 

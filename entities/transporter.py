@@ -78,6 +78,8 @@ class Transporter(Entity): #or name it truck?
                 self.load.state = ContainerState.DELIVERING
                 # update shipment info
                 self.load.load.state = ShipmentState.ON_ROUTE
+
+                # TODO rewrite to list comprehension
                 # update producer info
                 self.env.producers[self.load.load.producer_id].storage.remove(self.load.load) # remove picked up shipment from producer's storage
 
@@ -132,7 +134,7 @@ class Transporter(Entity): #or name it truck?
 
                 if self.env.config.debug is True:
                     print("Container % is dropped of at the hub of region %s "
-                          %(self.load.id, self.region))
+                          %(self.load.id, self.region.id))
 
                 # update transporter info (1)
                 # region is still the same

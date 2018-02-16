@@ -3,7 +3,7 @@ from numpy.random import randint
 
 class Config(object):
 
-    run_length = 5
+    run_length = 200
     regions = 9  # should *always* be a square map
     region_size = 50  # each region is itself square
 
@@ -28,6 +28,7 @@ class Config(object):
 
     debug = False
     surplus_tool_debug = False
+    debug_remove = True
 
     @staticmethod
     def producer_production_rate():
