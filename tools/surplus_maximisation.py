@@ -44,6 +44,7 @@ def maximisation_solver(surplus_array, container_bids, auctionable_shipments):
     # Each container is matched with atmost 1 shipment
     for i in range(num_containers):
         solver.Add(solver.Sum([x[i, j] for j in range(num_shipments)]) <= 1)
+
     # Each shipment is matched with atmost 1 container.
     for j in range(num_shipments):
         solver.Add(solver.Sum([x[i, j] for i in range(num_containers)]) <= 1)

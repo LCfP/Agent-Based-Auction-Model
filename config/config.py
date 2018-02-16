@@ -16,7 +16,7 @@ class Config(object):
     number_of_producers = 20
     number_of_transporters = 30
 
-    producer_surplus_percentage = 0.5 # = 50%
+    producer_surplus_percentage = 0.5  # = 50%
     container_surplus_percentage = 1 - producer_surplus_percentage
 
     container_starting_account_value = 1000
@@ -32,5 +32,3 @@ class Config(object):
     @staticmethod
     def producer_production_rate():
         return randint(1, 4)
-
-

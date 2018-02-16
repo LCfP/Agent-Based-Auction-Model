@@ -4,6 +4,7 @@ from tools import surplus_maximisation, route_euclidean_distance
 from collections import namedtuple
 from tabulate import tabulate
 
+
 class Auctioneer(Entity):
 
     def __init__(self, env, region):
@@ -18,7 +19,6 @@ class Auctioneer(Entity):
         self.container_bids = []
 
         self.account_value = 1000
-
 
     def auction(self):
         """
@@ -63,7 +63,7 @@ class Auctioneer(Entity):
 
         return max_key + 1  # new key, one greater than the last
 
-    def list_shipment(self, producer_bid): # name is porely chosen, easy way to change name in whole file?
+    def list_shipment(self, producer_bid):  # name is porely chosen, easy way to change name in whole file?
         self.auctionable_shipments.append(producer_bid)
 
     def unlist_shipment(self,shipment_registration_key):
@@ -145,7 +145,6 @@ class Auctioneer(Entity):
                                    "account value after payment"]))
 
         return
-
 
     def finalize_matchmaking(self,matches):
         '''I made a seperate function to unregister both container and shipments, otherwise it messes up the
