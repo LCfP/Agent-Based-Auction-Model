@@ -7,7 +7,7 @@ from analysis import states_analysis, storage_utilisation, idle_containers
 from concurrent.futures.process import ProcessPoolExecutor
 from concurrent.futures import wait
 import os
-import glob
+
 
 
 def run_sim(exp_no):
@@ -185,7 +185,7 @@ def run_sim(exp_no):
     KPI_run_stats = {'number of matches': len(matching_distances),
                      'average match distance':
                          sum(matching_distances)/len(matching_distances),
-                     'average container idle time:':
+                     'average container idle time':
                          container_state_averages[ContainerState.EMPTY.name],
                      'average shipment idle time':
                          shipment_state_averages[ShipmentState.STORAGED.name],
@@ -211,7 +211,7 @@ def job(space):
 
 if __name__ == "__main__":
     # run_sim(1)
-    no_threads = 2
+    no_threads = 3
     jobs_per_thread = 5
 
     executor = ProcessPoolExecutor(no_threads)
@@ -221,8 +221,7 @@ if __name__ == "__main__":
     futures = [executor.submit(job, item) for item in items]
     wait(futures)
 
-path = r'C:\DRO\DCL_rawdata_files'                     # use your path
-all_files = glob.glob(os.path.join(path, "*.csv"))     # advisable to use os.path.join as this makes concatenation OS independent
 
-df_from_each_file = (pd.read_csv(f) for f in all_files)
-concatenated_df   = pd.concat(df_from_each_file, ignore_index=True)
+
+
+
