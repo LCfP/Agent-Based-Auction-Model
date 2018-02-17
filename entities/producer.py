@@ -1,11 +1,12 @@
 from .seller import Seller
 from .shipment import Shipment
-from enums import EntityTypes
+from enums import EntityTypes, ShipmentState
 from itertools import count
 from random import randint
 from tools import route_euclidean_distance, find_hub_coordinates
 from collections import namedtuple
 from tabulate import tabulate
+from math import ceil
 
 class Producer(Seller):
     _ids = count(0)
@@ -67,10 +68,14 @@ class Producer(Seller):
                                                                  item.location,
                                                                  item.destination)
         #TODO improve biddingvalue based on shipping urgency
-        if len(self.storage) >= self.env.config.storage_urgency_level * \
-                self.storage_capacity:
-            shipping_urgency_cost = transport_cost_from_hub
-        else: shipping_urgency_cost = 0
+        storage_utilisation = len(self.storage) / self.storage_capacity
+        # using steps of 10% for urgency
+        storage_utilisation = ceil(storage_utilisation * 10)
+        urgency = storage_utilisation / 10
+        # urgency cost based on region size
+        shipping_urgency_cost = urgency * \
+                                self.env.config.region_size * \
+                                self.env.config.transport_cost
         #TODO add standard fees for container functionalties
         total_value = transport_cost_from_hub + transport_cost_to_destination \
                       + shipping_urgency_cost + 1
@@ -104,5 +109,17 @@ class Producer(Seller):
                                      "account value after payment"]))
         return payment_amount
 
-    def __str__(self):
-        return str((self.id, self.region, self.location, len(self.storage)))
+    def losing_auction_response(self):
+        # Producer unregisters shipments and corresponding bids,
+        # when they are not matched
+
+        for shipment in self.storage:
+            if shipment.state == ShipmentState.STORAGED:
+                for key in \
+                        self.region.auctioneer.entities[EntityTypes.SHIPMENT]:
+                    if self.region.auctioneer.entities[EntityTypes.SHIPMENT][
+                        key].id \
+                            == shipment.id:
+                        registrationkey = key
+                self.region.auctioneer.unregister(shipment.type, registrationkey)
+                self.region.auctioneer.unlist_shipment(registrationkey)

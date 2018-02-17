@@ -1,12 +1,13 @@
 from environment import Environment
-from enums import EntityTypes, ContainerState, ShipmentState
+from enums import EntityTypes, ContainerState, ShipmentState, TransporterState
 import pandas as pd
 from tools import gathering_shipmentinfo, calculate_matching_distance
-from analysis import states_analysis
+from analysis import states_analysis, storage_utilisation, idle_containers
 
 from concurrent.futures.process import ProcessPoolExecutor
 from concurrent.futures import wait
 import os
+import glob
 
 
 def run_sim(exp_no):
@@ -16,6 +17,8 @@ def run_sim(exp_no):
     #KPI data storage
     containerinfo = {}
     shipmentinfo = {}
+    transporterinfo = {}
+    producer_storage_info = {}
     matching_distances = []
 
     for day in range(environment.config.run_length):  # run model!
@@ -119,6 +122,11 @@ def run_sim(exp_no):
             if container.state == ContainerState.RELOCATION_NEED:
                 environment.transportcompany.assign_transporter(container)
 
+        # Producer response for shipments that are not matched
+        # Currently not used because of increase of simulation length
+        # for producer in environment.producers:
+        #     producer.losing_auction_response()
+
         # END OF DAILY SIMULATION ACTIONS
 
         # store container state info in dict
@@ -131,6 +139,22 @@ def run_sim(exp_no):
         # store shipment state info in dict
         shipmentinfo = gathering_shipmentinfo(shipmentinfo,environment,day)
 
+        # store transporter state info in dict
+        for transporter in environment.transportcompany.transporters:
+            if transporter.id not in transporterinfo.keys():
+                transporterinfo[transporter.id] = [transporter.state]
+            else:
+                transporterinfo[transporter.id].append(transporter.state)
+
+        # store producer storage utilisation level in dict
+        for producer in environment.producers:
+            if producer.id not in producer_storage_info.keys():
+                producer_storage_info[producer.id] = \
+                    [len(producer.storage) / environment.config.storage_capacity]
+            else:
+                producer_storage_info[producer.id].append(
+                    len(producer.storage) / environment.config.storage_capacity)
+
 
     # Create dataframe for containerinfo
     containerinfo_df = pd.DataFrame(containerinfo)
@@ -142,20 +166,39 @@ def run_sim(exp_no):
     # Create dataframe for shipmentinfo
     shipmentinfo_df = pd.DataFrame(shipmentinfo)
 
-    # matching distance
-    print("number of matches:")
-    print(len(matching_distances))
-    print("average match distance:")
-    print(sum(matching_distances)/len(matching_distances))
+    # Create dataframe for transporterinfo
+    transporterinfo_df = pd.DataFrame(transporterinfo)
 
+    # Create dataframe for producer storage utilisation info
+    producer_storage_info_df = pd.DataFrame(producer_storage_info)
 
-    states_analysis(containerinfo_df, ContainerState)
-    states_analysis(shipmentinfo_df, ShipmentState)
+    # Analyse data
+    container_state_averages = states_analysis(containerinfo_df, ContainerState)
+    shipment_state_averages = states_analysis(shipmentinfo_df, ShipmentState)
+    transporter_state_averages =states_analysis(transporterinfo_df, TransporterState)
+
+    # Plot storage utilisation and percentage of containers being idle over time
+    storage_utilisation(producer_storage_info_df)
+    idle_containers(containerinfo_df)
+
+    # Save KPI data of run
+    KPI_run_stats = {'number of matches': len(matching_distances),
+                     'average match distance':
+                         sum(matching_distances)/len(matching_distances),
+                     'average container idle time:':
+                         container_state_averages[ContainerState.EMPTY.name],
+                     'average shipment idle time':
+                         shipment_state_averages[ShipmentState.STORAGED.name],
+                     'average transporter idle time':
+                        transporter_state_averages[TransporterState.EMPTY.name]}
+
+    KPI_run_stats_df = pd.DataFrame(KPI_run_stats, index= [exp_no])
+    # print(KPI_run_stats_df)
 
     # save this experiment
     os.makedirs("./experiments/{0}".format(exp_no))
 
-    containerinfo_df.to_csv("./experiments/{0}/container_info.csv"
+    KPI_run_stats_df.to_csv("./experiments/{0}/KPI_run_stats_df.csv"
                             .format(exp_no))
 
 
@@ -168,8 +211,8 @@ def job(space):
 
 if __name__ == "__main__":
     # run_sim(1)
-    no_threads = 3
-    jobs_per_thread = 25
+    no_threads = 2
+    jobs_per_thread = 5
 
     executor = ProcessPoolExecutor(no_threads)
     items = [[start, start + jobs_per_thread] for start in range(
@@ -177,3 +220,9 @@ if __name__ == "__main__":
 
     futures = [executor.submit(job, item) for item in items]
     wait(futures)
+
+path = r'C:\DRO\DCL_rawdata_files'                     # use your path
+all_files = glob.glob(os.path.join(path, "*.csv"))     # advisable to use os.path.join as this makes concatenation OS independent
+
+df_from_each_file = (pd.read_csv(f) for f in all_files)
+concatenated_df   = pd.concat(df_from_each_file, ignore_index=True)

@@ -17,6 +17,8 @@ class Environment(object):
         Region._ids = count(0)
         Producer._ids = count(0)
         Shipment._ids = count(0)
+        Transporter._ids = count(0)
+        Container._ids = count(0)
         # TODO Expand this to all entities
 
         self.regions = [Region(self, region_id) for region_id in

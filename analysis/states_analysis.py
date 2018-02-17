@@ -1,9 +1,13 @@
 import matplotlib.pyplot as plt
+from config import Config
 
 def states_analysis(df, enum_state):
     states_occurrences_dict = state_occurrences(df, enum_state)
     states_averages = calculate_state_average(states_occurrences_dict, enum_state)
-    plot_state_averages(states_averages)
+    if Config.plot is True:
+        plot_state_averages(states_averages)
+
+    return states_averages
 
 def state_occurrences(df, enum_state):
     states_occurrences_dict = {}

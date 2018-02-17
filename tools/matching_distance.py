@@ -23,4 +23,3 @@ def calculate_matching_distance(matches, auctioneer, matching_distances:list):
         matching_distances.append(match_distance)
     return matching_distances
 
-#TODO implement in run
