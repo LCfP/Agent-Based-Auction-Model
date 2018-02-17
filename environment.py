@@ -28,9 +28,15 @@ class Environment(object):
         self.containers = [Container(self, choice(self.regions)) for _ in range(self.config.number_of_containers)]
 
         # setup producers
-        self.producers = [Producer(self, choice(self.regions)) for _ in range(self.config.number_of_producers)]
+        # self.producers = [Producer(self, choice(self.regions)) for _ in range(self.config.number_of_producers)]
 
         # setup transport company (currently only 1 transport company)
         self.transportcompany = Transportcompany(self)
 
         self.consumer = Consumer(self)
+
+        # alternative setup for producers to create balanced regions:
+        self.producers = []
+        for _ in range(self.config.number_of_producers):
+            producer = Producer(self, self.regions[_ % len(self.regions)])
+            self.producers.append(producer)

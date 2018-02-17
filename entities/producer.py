@@ -78,7 +78,7 @@ class Producer(Seller):
                                 self.env.config.transport_cost
         #TODO add standard fees for container functionalties
         total_value = transport_cost_from_hub + transport_cost_to_destination \
-                      + shipping_urgency_cost + 1
+                      + shipping_urgency_cost
 
         producerbid = producerbid(registration_key = registrationkey,
                                     biddingvalue = total_value)

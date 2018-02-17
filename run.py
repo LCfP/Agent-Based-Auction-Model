@@ -82,7 +82,7 @@ def run_sim(exp_no):
 
             matches = region.auctioneer.match_containers_shipments()
             calculate_matching_distance(matches, region.auctioneer,
-                                        matching_distances)
+                                        matching_distances, day)
             invoices = region.auctioneer.invoice_producers(matches)
             for invoice in invoices:
                 for producer in environment.producers:
@@ -122,10 +122,6 @@ def run_sim(exp_no):
             if container.state == ContainerState.RELOCATION_NEED:
                 environment.transportcompany.assign_transporter(container)
 
-        # Producer response for shipments that are not matched
-        # Currently not used because of increase of simulation length
-        # for producer in environment.producers:
-        #     producer.losing_auction_response()
 
         # END OF DAILY SIMULATION ACTIONS
 
@@ -172,6 +168,12 @@ def run_sim(exp_no):
     # Create dataframe for producer storage utilisation info
     producer_storage_info_df = pd.DataFrame(producer_storage_info)
 
+    # Remove data from warmup period
+    containerinfo_df = containerinfo_df.iloc[environment.config.warmup_period:]
+    # shipmentinfo_df = shipmentinfo_df.iloc[environment.config.warmup_period:]
+    transporterinfo_df = transporterinfo_df.iloc[environment.config.warmup_period:]
+
+
     # Analyse data
     container_state_averages = states_analysis(containerinfo_df, ContainerState)
     shipment_state_averages = states_analysis(shipmentinfo_df, ShipmentState)
@@ -181,26 +183,32 @@ def run_sim(exp_no):
     storage_utilisation(producer_storage_info_df)
     idle_containers(containerinfo_df)
 
-    # Save KPI data of run
-    KPI_run_stats = {'number of matches': len(matching_distances),
-                     'average match distance':
-                         sum(matching_distances)/len(matching_distances),
-                     'average container idle time':
-                         container_state_averages[ContainerState.EMPTY.name],
-                     'average shipment idle time':
-                         shipment_state_averages[ShipmentState.STORAGED.name],
-                     'average transporter idle time':
-                        transporter_state_averages[TransporterState.EMPTY.name]}
+    if len(matching_distances) > 0:
 
-    KPI_run_stats_df = pd.DataFrame(KPI_run_stats, index= [exp_no])
-    # print(KPI_run_stats_df)
+        # Save KPI data of run
+        KPI_run_stats = {'number of matches': len(matching_distances),
+                         'average match distance':
+                             sum(matching_distances)/len(matching_distances),
+                         'average container idle time':
+                             container_state_averages[ContainerState.EMPTY.name],
+                         'average shipment idle time':
+                             shipment_state_averages[ShipmentState.STORAGED.name],
+                         'average transporter idle time':
+                            transporter_state_averages[TransporterState.EMPTY.name]}
 
-    # save this experiment
-    os.makedirs("./experiments/{0}".format(exp_no))
+        KPI_run_stats_df = pd.DataFrame(KPI_run_stats, index= [exp_no])
+        # print(KPI_run_stats_df)
 
-    KPI_run_stats_df.to_csv("./experiments/{0}/KPI_run_stats_df.csv"
-                            .format(exp_no))
 
+
+        # save this experiment
+        os.makedirs("./experiments/{0}".format(exp_no))
+
+        KPI_run_stats_df.to_csv("./experiments/{0}/KPI_run_stats_df.csv"
+                                .format(exp_no))
+
+    else:
+        print("no matches made")
 
 
 def job(space):
@@ -212,7 +220,7 @@ def job(space):
 if __name__ == "__main__":
     # run_sim(1)
     no_threads = 3
-    jobs_per_thread = 5
+    jobs_per_thread = 34
 
     executor = ProcessPoolExecutor(no_threads)
     items = [[start, start + jobs_per_thread] for start in range(

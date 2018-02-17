@@ -1,10 +1,13 @@
 from tools import route_euclidean_distance
 from enums import EntityTypes
+from config import Config
 
-def calculate_matching_distance(matches, auctioneer, matching_distances:list):
+def calculate_matching_distance(matches, auctioneer, matching_distances:list, day):
     if matches is None:
         return
 
+    if day < Config.warmup_period:
+        return
 
     for match in matches:
         # first determine container location
