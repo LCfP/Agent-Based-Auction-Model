@@ -33,3 +33,7 @@ def run_sim(exp_no):
         # Production of shipments, and registration of shipments on auction
         production_registration(environment)
 
+        # Container registers at auction, creates bids, participates in auction
+        # and when no match is made, the container un-registers himself
+        container_auction_process(environment,matching_distances,day)
+

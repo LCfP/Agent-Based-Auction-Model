@@ -137,4 +137,18 @@ class Container(Buyer):
                           "initiates relocation to a hub"
                           %(self.id, self.idle_days))
 
-        # TODO check for bugs
+
+    def unregister_continuous_auction(self):
+
+        if self.env.config.debug is True:
+            print("Container %s did not win and therefore un-registers himself"
+                  %(self.id))
+
+        for key in \
+                self.region.auctioneer.entities[EntityTypes.CONTAINER]:
+            if self.region.auctioneer.entities[EntityTypes.CONTAINER][
+                key].id \
+                    == self.id:
+                registrationkey = key
+        self.region.auctioneer.unregister(self.type, registrationkey)
+        self.region.auctioneer.unlist_container_bid(registrationkey)

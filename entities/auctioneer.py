@@ -1,6 +1,6 @@
 from .entity import Entity
 from enums import EntityTypes, ContainerState, ShipmentState
-from tools import surplus_maximisation
+from tools import surplus_maximisation, best_match
 from collections import namedtuple
 from tabulate import tabulate
 
@@ -202,7 +202,17 @@ class Auctioneer(Entity):
                                 "bidding value",
                                 "shipment registration key"]))
 
-    # Function below are written for continuous environment
+    # Function below is written for continuous environment
     def continuous_matching(self):
-        matches = []
-        # TODO rewrite surplus maximisation
+        # Continuous action runs for each container, therefore resulting in one
+        # match at a time
+        match = best_match(self.container_bids, self.auctionable_shipments)
+
+        if self.env.config.debug is True:
+            print("The following matches have been made in region %s:"
+                  %(self.region.id))
+            print(tabulate(match, headers=["container registration key",
+                                             "shipment registration key",
+                                             "surplus"]))
+
+        return match

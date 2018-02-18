@@ -45,7 +45,9 @@ def container_bidding_proces(environment): # Normal auction
                 for bid in container_bids:
                     container.region.auctioneer.list_container_bid(bid)
 
-def container_auction_process(environment): # Continuous auction
+def container_auction_process(environment, matching_distances, day):
+    # Continuous auction process for containers
+
     if environment.config.debug is True:
         print(" \n Container bidding process")
 
@@ -61,14 +63,17 @@ def container_auction_process(environment): # Continuous auction
                 container_bids = container.bidding_proces(registrationkey)
                 for bid in container_bids:
                     container.region.auctioneer.list_container_bid(bid)
-                # TODO ADD AUCTION RUN
-                # TODO ADD un registration
+                # TODO CHECK continuous auction
+                auctioning_continuous(environment,container,matching_distances,
+                                      day)
+                # TODO CHECK un-registration
+                if container.state == ContainerState.EMPTY:
+                    container.unregister_continuous_auction()
 
 
 def auctioning_continuous(environment, container ,matching_distances, day):
     if environment.config.debug is True:
         print(" \n Auctioneer continuous matching process")
-
 
     if environment.config.debug is True:
         print("\n registered items in region %s before matching"
@@ -76,20 +81,20 @@ def auctioning_continuous(environment, container ,matching_distances, day):
         container.region.auctioneer.print_shipment_bid_info()
         container.region.auctioneer.print_container_bid_info() # should be empty
 
-    matches = region.auctioneer.match_containers_shipments()
-    calculate_matching_distance(matches, region.auctioneer,
+    match = container.region.auctioneer.continuous_matching()
+    calculate_matching_distance(match, container.region.auctioneer,
                                 matching_distances, day)
-    invoices = region.auctioneer.invoice_producers(matches)
+    invoices = container.region.auctioneer.invoice_producers(match)
     for invoice in invoices:
         for producer in environment.producers:
             if invoice.producer_id == producer.id:
                 payment = producer.pay_invoice(invoice)
-                region.auctioneer.account_value += payment
-    region.auctioneer.pay_container(matches)
-    region.auctioneer.finalize_matchmaking(matches)
+                container.region.auctioneer.account_value += payment
+    container.region.auctioneer.pay_container(match)
+    container.region.auctioneer.finalize_matchmaking(match)
 
     if environment.config.debug is True:
         print("\n registered items in region %s after matching"
-              % (region.id))
-        region.auctioneer.print_shipment_bid_info()
-        region.auctioneer.print_container_bid_info()
+              % (container.region.id))
+        container.region.auctioneer.print_shipment_bid_info()
+        container.region.auctioneer.print_container_bid_info()
