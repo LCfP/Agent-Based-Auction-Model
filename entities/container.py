@@ -23,6 +23,7 @@ class Container(Buyer):
         self.shipment_contracts = [] # list because in the future, containers could bid on shipments, when they are loaded
         self.load = 0
         self.idle_days = 1 # checked at end of day, therefore initially 1 day idle
+        self.idle_hours = 0 # used for continuous
 
     def create_bids(self, best_shipments, registrationkey):
         containerbid = namedtuple('containerbid', 'container_registration_key shipment_registration_key biddingvalue')
@@ -132,7 +133,7 @@ class Container(Buyer):
             if self.location != find_hub_coordinates(self.region):
                 self.state = ContainerState.RELOCATION_NEED
 
-                if self.env.config.debug is True:
+                if self.env.config.debug:
                     print("Container %s is idle for %s days and therefore "
                           "initiates relocation to a hub"
                           %(self.id, self.idle_days))
@@ -152,3 +153,20 @@ class Container(Buyer):
                 registrationkey = key
         self.region.auctioneer.unregister(self.type, registrationkey)
         self.region.auctioneer.unlist_container_bid(registrationkey)
+        self.idle_hours += 1
+
+    def losing_continuous_auction_response(self):
+        # Only initiate when container is idle
+        if self.state != ContainerState.EMPTY:
+            return
+
+        # Case when container is somewhere in region and reached idle max
+        if self.idle_hours == self.env.config.idle_max and \
+                        self.location != find_hub_coordinates(self.region):
+            self.state = ContainerState.RELOCATION_NEED
+
+            if self.env.config.debug:
+                print("Container %s is idle for %s days and therefore "
+                      "initiates relocation to a hub"
+                      % (self.id,
+                         self.idle_hours / self.env.config.hours_in_day))

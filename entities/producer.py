@@ -25,6 +25,9 @@ class Producer(Seller):
         self.storage_capacity = self.env.config.storage_capacity
         self.account_value = self.env.config.producer_starting_account_value
 
+        # only used for continuous
+        self.production_status = 0
+
 
     def produce(self):
         # a producer produces according to his production rate if he has room
@@ -123,3 +126,35 @@ class Producer(Seller):
                         registrationkey = key
                 self.region.auctioneer.unregister(shipment.type, registrationkey)
                 self.region.auctioneer.unlist_shipment(registrationkey)
+
+    def produce_continuous(self):
+        # a producer produces according to his production rate if he has room
+        # within his storage for the produced shipment
+        if self.env.config.debug:
+            room_before_production = self.storage_capacity-len(self.storage)
+
+        # First check if there is room for production
+        if len(self.storage) >= self.storage_capacity:
+            return
+
+        # update production_status
+        self.production_status += self.production_rate
+
+        # add shipment to storage when fully produced
+        if self.production_status >= 1:
+
+            shipment = Shipment(producer_id=self.id,
+                                location=self.location,
+                                destination=self._set_destination(),
+                                region=self.region)
+            self.storage.append(shipment)
+            self.production_status -= 1
+
+
+        if self.env.config.debug:
+            table = (["producer id", self.id],
+                     ["storage room before production", room_before_production],
+                     ["production status", self.production_status],
+                     ["storage room after production",
+                      self.storage_capacity-len(self.storage) ])
+            print (tabulate(table))

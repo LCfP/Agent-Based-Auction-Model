@@ -1,30 +1,25 @@
-from collections import namedtuple
-from operator import attrgetter
+from math import floor
+
+production_status = 0
+production_rate = 3
 
 
-possible_matches = []
-match = namedtuple('match', ['container_registration_key',
-                             'shipment_registration_key',
-                             'surplus'])
+hours_in_day = 12
+day = 4
+storage = 0
 
-for number in range(5):
-    new_match = match(container_registration_key=number,
-                  shipment_registration_key= number,
-                  surplus= number)
-    possible_matches.append(new_match)
+for hour in range(hours_in_day * day):
+    production_status += production_rate / hours_in_day
 
-winning_match = []
-winning_match.append(max(possible_matches, key=attrgetter('surplus')))
+    print(production_status, "at hour", hour % hours_in_day, "at day",floor(hour / hours_in_day))
 
-print(winning_match)
+    if production_status >= 1:
+        storage += 1
+        production_status -= 1
+        print("added shipment to storage")
 
-import numpy as np
-from numpy.random import randint
+print(storage)
 
-sample_1 = randint(1, 5, (1, 100))
-sample_2 = randint(1, 4, (1, 100))
 
-stds = np.asarray((sample_1.std(), sample_2.std()))
 
-print(stds.std())  # of statistic
-print(np.concatenate((sample_1, sample_1)).std())  # of sample
+

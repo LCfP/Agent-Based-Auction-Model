@@ -8,13 +8,13 @@ def transportation(environment):
         transporter.move()
         transporter.status_update()
 
-def production_registration(environment):
+def production_registration_continuous(environment):
     if environment.config.debug is True:
         print(" \n Production and entering shipment bids")
 
     for producer in environment.producers:
         # all producers produce according to their production rate
-        producer.produce() #TODO update produce for continuous
+        producer.produce_continuous() #TODO update produce for continuous
         # all shipments that are produced are registered at the auction
         for shipment in producer.storage:
             if shipment.state == ShipmentState.STORAGED:
@@ -63,9 +63,9 @@ def container_auction_process(environment, matching_distances, day):
                 container_bids = container.bidding_proces(registrationkey)
                 for bid in container_bids:
                     container.region.auctioneer.list_container_bid(bid)
-                # TODO CHECK continuous auction
+
                 auctioning_continuous(environment,container,matching_distances,day)
-                # TODO CHECK un-registration
+
                 if container.state == ContainerState.EMPTY:
                     container.unregister_continuous_auction()
 
@@ -107,3 +107,11 @@ def assign_transport(environment):
         if container.state == ContainerState.NEEDING_TRANSPORT:
             environment.transportcompany.assign_transporter(container)
 
+def assign_relocation_transport(environment):
+    for container in environment.containers:
+        if container.state == ContainerState.RELOCATION_NEED:
+            environment.transportcompany.assign_transporter(container)
+
+def container_idle_management(environment):
+    for container in environment.containers:
+        container.losing_continuous_auction_response()

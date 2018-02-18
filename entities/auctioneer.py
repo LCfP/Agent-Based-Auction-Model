@@ -158,6 +158,7 @@ class Auctioneer(Entity):
                 container = self.unregister(EntityTypes.CONTAINER,match.container_registration_key)
                 container.state = ContainerState.NEEDING_TRANSPORT
                 container.idle_days = 1 # reset to initial setting
+                container.idle_hours = 0 # reset to initial setting
                 container.shipment_contracts.append(shipment)
                 self.unlist_shipment(match.shipment_registration_key)
                 self.unlist_container_bid(match.container_registration_key)
