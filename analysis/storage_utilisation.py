@@ -8,7 +8,7 @@ def storage_utilisation(df):
     df["mean"] = df.mean(axis=1)
     df["max"] = df.max(axis=1)
 
-    if Config.plot is True:
+    if Config.plot:
         df[['min', 'mean', 'max']].plot()
         axes = plt.gca()
         axes.set_ylim([0, 1])

@@ -218,16 +218,16 @@ def job(space):
 
 
 if __name__ == "__main__":
-    # run_sim(1)
-    no_threads = 3
-    jobs_per_thread = 34
-
-    executor = ProcessPoolExecutor(no_threads)
-    items = [[start, start + jobs_per_thread] for start in range(
-        0, jobs_per_thread * no_threads, jobs_per_thread)]
-
-    futures = [executor.submit(job, item) for item in items]
-    wait(futures)
+    run_sim(1)
+    # no_threads = 3
+    # jobs_per_thread = 34
+    #
+    # executor = ProcessPoolExecutor(no_threads)
+    # items = [[start, start + jobs_per_thread] for start in range(
+    #     0, jobs_per_thread * no_threads, jobs_per_thread)]
+    #
+    # futures = [executor.submit(job, item) for item in items]
+    # wait(futures)
 
 
 

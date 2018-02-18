@@ -4,7 +4,8 @@ from config import Config
 def states_analysis(df, enum_state):
     states_occurrences_dict = state_occurrences(df, enum_state)
     states_averages = calculate_state_average(states_occurrences_dict, enum_state)
-    if Config.plot is True:
+
+    if Config.plot:
         plot_state_averages(states_averages)
 
     return states_averages

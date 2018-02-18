@@ -9,7 +9,7 @@ def idle_containers(df):
                           axis= 1)
 
 
-    if Config.plot is True:
+    if Config.plot:
         df['idle'].plot()
 
         axes = plt.gca()

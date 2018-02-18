@@ -30,7 +30,7 @@ class Config(object):
 
     debug = False
     surplus_tool_debug = False
-    plot = False
+    plot = True
 
     warmup_period = 100
 

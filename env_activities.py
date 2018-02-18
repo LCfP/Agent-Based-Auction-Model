@@ -1,4 +1,3 @@
-from environment_continuous import Environment_continuous
 from enums import EntityTypes, ShipmentState, ContainerState
 from tools import calculate_matching_distance
 
