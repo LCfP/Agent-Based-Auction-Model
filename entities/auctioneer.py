@@ -201,3 +201,8 @@ class Auctioneer(Entity):
                                 "container registration key",
                                 "bidding value",
                                 "shipment registration key"]))
+
+    # Function below are written for continuous environment
+    def continuous_matching(self):
+        matches = []
+        # TODO rewrite surplus maximisation
