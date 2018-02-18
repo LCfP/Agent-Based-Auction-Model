@@ -102,7 +102,7 @@ def run_sim(exp_no):
             if container.state == ContainerState.NEEDING_TRANSPORT:
                 environment.transportcompany.assign_transporter(container)
 
-        if environment.config.debug is True:
+        if environment.config.debug:
             for container in environment.containers:
                 if container.load != 0:
                     print("container %s has state %s and "

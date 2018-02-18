@@ -24,7 +24,7 @@ def best_match(container_bids, auctionable_shipments):
                 if shipment_offer.biddingvalue - \
                         container_bid.biddingvalue >= 0:
                     new_match = match(container_registration_key=
-                                  container_bid.shipment_registration_key,
+                                  container_bid.container_registration_key,
                                   shipment_registration_key=
                                   shipment_offer.registration_key,
                                   surplus= shipment_offer.biddingvalue -

@@ -64,11 +64,16 @@ def container_auction_process(environment, matching_distances, day):
                 for bid in container_bids:
                     container.region.auctioneer.list_container_bid(bid)
                 # TODO CHECK continuous auction
-                auctioning_continuous(environment,container,matching_distances,
-                                      day)
+                auctioning_continuous(environment,container,matching_distances,day)
                 # TODO CHECK un-registration
                 if container.state == ContainerState.EMPTY:
                     container.unregister_continuous_auction()
+
+                if environment.config.debug:
+                    print("\n registered items in region %s after matching"
+                          % (container.region.id))
+                    container.region.auctioneer.print_shipment_bid_info()
+                    container.region.auctioneer.print_container_bid_info()
 
 
 def auctioning_continuous(environment, container ,matching_distances, day):
@@ -82,19 +87,23 @@ def auctioning_continuous(environment, container ,matching_distances, day):
         container.region.auctioneer.print_container_bid_info() # should be empty
 
     match = container.region.auctioneer.continuous_matching()
+
     calculate_matching_distance(match, container.region.auctioneer,
                                 matching_distances, day)
+
     invoices = container.region.auctioneer.invoice_producers(match)
     for invoice in invoices:
         for producer in environment.producers:
             if invoice.producer_id == producer.id:
                 payment = producer.pay_invoice(invoice)
                 container.region.auctioneer.account_value += payment
+
     container.region.auctioneer.pay_container(match)
+
     container.region.auctioneer.finalize_matchmaking(match)
 
-    if environment.config.debug is True:
-        print("\n registered items in region %s after matching"
-              % (container.region.id))
-        container.region.auctioneer.print_shipment_bid_info()
-        container.region.auctioneer.print_container_bid_info()
+def assign_transport(environment):
+    for container in environment.containers:
+        if container.state == ContainerState.NEEDING_TRANSPORT:
+            environment.transportcompany.assign_transporter(container)
+

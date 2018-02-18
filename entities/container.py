@@ -62,7 +62,7 @@ class Container(Buyer):
         distance_to_shipments.sort(key = lambda item: item[1])
         best_shipments = distance_to_shipments[:self.env.config.number_of_bids]
 
-        if self.env.config.debug is True and self.id < 1:
+        if self.env.config.debug and self.id < 1:
             print("\n", distance_to_shipments)
             print("from this list, the container should select the %s "
                   "closest shipments" %(self.env.config.number_of_bids))
@@ -78,26 +78,26 @@ class Container(Buyer):
             best_shipments = self.select_best_shipments(available_shipments)
             container_bids = self.create_bids(best_shipments,registrationkey)
 
-            if self.env.config.debug is True and self.region.id < 1:
+            if self.env.config.debug and self.region.id < 1:
                 print("container %s in region %s enters the bids %s"
                       %(self.id, self.region.id, container_bids))
 
             return container_bids
 
-        if self.env.config.debug is True and self.region.id < 1:
+        if self.env.config.debug and self.region.id < 1:
             print("there are no shipments available in region %s"
                   %(self.region.id))
         return []
 
     def losing_auction_response(self):
-        if self.env.config.debug is True:
+        if self.env.config.debug:
             print("Container %s is still empty and undertakes action"
                   %(self.id))
 
         # Case when container is somewhere in region
         if self.idle_days <= self.env.config.idle_max:
 
-            if self.env.config.debug is True:
+            if self.env.config.debug:
                 print("Container %s is idle for %s day(s) and therefore "
                       "un-registers itself"%(self.id, self.idle_days))
 
@@ -114,7 +114,7 @@ class Container(Buyer):
         # Case when container is idle at a hub location
         elif self.location == find_hub_coordinates(self.region):
 
-            if self.env.config.debug is True:
+            if self.env.config.debug:
                 print("Container %s is idle at hub and un-registers itself"
                       %(self.id))
 
@@ -140,7 +140,7 @@ class Container(Buyer):
 
     def unregister_continuous_auction(self):
 
-        if self.env.config.debug is True:
+        if self.env.config.debug:
             print("Container %s did not win and therefore un-registers himself"
                   %(self.id))
 

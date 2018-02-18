@@ -36,7 +36,7 @@ class Auctioneer(Entity):
         registration_key = self._registration(entity.type)
         self.entities[entity.type][registration_key] = entity
 
-        if self.env.config.debug is True and self.region.id < 1:
+        if self.env.config.debug and self.region.id < 1:
             print("registration takes place in region: %s "
                   "returned registration key: %s"
                   %(self.region.id,registration_key))
@@ -81,7 +81,7 @@ class Auctioneer(Entity):
         matches = surplus_maximisation(self.container_bids,
                                        self.auctionable_shipments)
 
-        if self.env.config.debug is True:
+        if self.env.config.debug:
             print("The following matches have been made in region %s:"
                   %(self.region.id))
             print(tabulate(matches, headers=["container registration key",
@@ -108,7 +108,7 @@ class Auctioneer(Entity):
                                               self.env.config.producer_surplus_percentage * match.surplus)
                         invoices.append(new_invoice)
 
-        if self.env.config.debug is True:
+        if self.env.config.debug:
             print("The following invoices have been created:")
             print(tabulate(invoices, headers=["producer id","shipment id",
                                               "amount due"]))
@@ -117,12 +117,12 @@ class Auctioneer(Entity):
 
     def pay_container(self,matches):
         # pay the container
-        if matches is not None:  #
+        if matches is not None:
             for match in matches:
                 container = self.entities[EntityTypes.CONTAINER][
                     match.container_registration_key]
 
-                if self.env.config.debug is True:
+                if self.env.config.debug:
                     account_value_before = self.account_value
 
                 for container_bid in self.container_bids:
@@ -137,7 +137,7 @@ class Auctioneer(Entity):
                         # remove payment amount from auctioneer account
                         self.account_value -= payment
 
-                if self.env.config.debug is True:
+                if self.env.config.debug:
                     print(tabulate([[self.region.id,account_value_before,
                                     payment, container.id, self.account_value]],
                           headers=["region id", "account value before payment",
@@ -208,7 +208,7 @@ class Auctioneer(Entity):
         # match at a time
         match = best_match(self.container_bids, self.auctionable_shipments)
 
-        if self.env.config.debug is True:
+        if self.env.config.debug:
             print("The following matches have been made in region %s:"
                   %(self.region.id))
             print(tabulate(match, headers=["container registration key",

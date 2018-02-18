@@ -23,7 +23,7 @@ def run_sim(exp_no):
 
     for day in range(environment.config.run_length):  # run model!
 
-        if environment.config.debug is True:
+        if environment.config.debug:
             print(" \n \033[1m start of day %s" %(day))
             print('\033[0m')
 
@@ -31,9 +31,16 @@ def run_sim(exp_no):
         transportation(environment)
 
         # Production of shipments, and registration of shipments on auction
-        production_registration(environment)
+        production_registration(environment) # TODO update to hourly production
 
         # Container registers at auction, creates bids, participates in auction
         # and when no match is made, the container un-registers himself
         container_auction_process(environment,matching_distances,day)
 
+        # Assign transport for containers that have obtained a shipment contract
+        assign_transport(environment)
+
+        # TODO implement container action when he is a certain time idle
+
+# run experiment
+run_sim(1)
