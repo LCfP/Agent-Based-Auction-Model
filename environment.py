@@ -39,3 +39,4 @@ class Environment(object):
         for _ in range(self.config.number_of_producers):
             producer = Producer(self, self.regions[_ % len(self.regions)])
             self.producers.append(producer)
+

@@ -117,7 +117,7 @@ class Producer(Seller):
         # when they are not matched
 
         for shipment in self.storage:
-            if shipment.state == ShipmentState.STORAGED:
+            if shipment.state == ShipmentState.STORED:
                 for key in \
                         self.region.auctioneer.entities[EntityTypes.SHIPMENT]:
                     if self.region.auctioneer.entities[EntityTypes.SHIPMENT][

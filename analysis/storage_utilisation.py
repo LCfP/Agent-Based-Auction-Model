@@ -14,7 +14,7 @@ def storage_utilisation(df):
         axes.set_ylim([0, 1])
 
         plt.ylabel('storage utilisation rate')
-        plt.xlabel('days')
+        plt.xlabel('hours')
 
         plt.show()
 

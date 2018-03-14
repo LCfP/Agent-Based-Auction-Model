@@ -2,7 +2,8 @@ from tools import route_euclidean_distance
 from enums import EntityTypes
 from config import Config
 
-def calculate_matching_distance(matches, auctioneer, matching_distances:list, day):
+def calculate_matching_distance(matches, auctioneer, matching_distances: list,
+                                day):
     if matches is None:
         return
 

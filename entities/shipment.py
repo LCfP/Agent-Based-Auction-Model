@@ -14,5 +14,5 @@ class Shipment(Entity):
         self.region = region
 
         self.type = EntityTypes.SHIPMENT
-        self.state = ShipmentState.STORAGED
+        self.state = ShipmentState.STORED
         # TODO: a shipment is more than just this. It contains products!

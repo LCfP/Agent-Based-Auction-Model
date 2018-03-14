@@ -14,12 +14,12 @@ def calculate_KPI_run_stats(matching_distances, container_state_averages,
                          'average container idle time':
                              container_state_averages[ContainerState.EMPTY.name],
                          'average shipment idle time':
-                             shipment_state_averages[ShipmentState.STORAGED.name],
+                             shipment_state_averages[ShipmentState.STORED.name],
                          'average transporter idle time':
                             transporter_state_averages[TransporterState.EMPTY.name]}
 
         KPI_run_stats_df = pd.DataFrame(KPI_run_stats, index= [exp_no])
 
-        print(KPI_run_stats_df)
+        # print(KPI_run_stats_df)
 
         return KPI_run_stats_df
