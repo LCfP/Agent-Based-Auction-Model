@@ -1,4 +1,4 @@
-from environment import Environment
+from environment_continuous import Environment_continuous
 from env_activities import *
 from tools import gathering_data, remove_warmup_period, write_to_dataframe
 from analysis import calculate_averages
@@ -7,7 +7,7 @@ from concurrent.futures import wait
 
 
 def run_sim(exp_no):
-    environment = Environment()
+    environment = Environment_continuous()
     environment.setup()
 
     # KPI data storage
@@ -19,7 +19,7 @@ def run_sim(exp_no):
 
     for day in range(environment.config.run_length):  # run model!
         # Perform daily actions and save KPI matching distance info
-        daily_actions(environment, matching_distances, day)
+        continuous_actions(environment, matching_distances, day)
 
         # save KPI results per simulation day
         gathering_data(environment, day, containerinfo, shipmentinfo,

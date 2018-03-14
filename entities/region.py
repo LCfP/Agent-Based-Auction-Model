@@ -1,6 +1,7 @@
 from .entity import Entity
 from .auctioneer import Auctioneer
 import numpy as np
+from enums import EntityTypes
 
 
 class Region(Entity):
@@ -13,6 +14,10 @@ class Region(Entity):
         self.auctioneer = Auctioneer(env, self)
 
         self.geography = self._geography()
+
+        self.type = EntityTypes.REGION
+
+
 
     def draw_location(self):
         """
@@ -37,3 +42,4 @@ class Region(Entity):
                   (north_south + 1) * self.env.config.region_size]
 
         return [x_axis, y_axis]
+

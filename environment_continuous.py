@@ -1,13 +1,12 @@
-from config import Config
+from config import Config_continuous
 from entities import *
 from random import choice
 from itertools import count
 
 
-class Environment(object):
-
+class Environment_continuous(object):
     def __init__(self):
-        self.config = Config()
+        self.config = Config_continuous()
 
     def setup(self):
         """
@@ -24,7 +23,8 @@ class Environment(object):
                         range(self.config.regions)]
 
         # setup containers
-        self.containers = [Container(self, choice(self.regions)) for _ in range(self.config.number_of_containers)]
+        self.containers = [Container(self, choice(self.regions)) for _ in
+                           range(self.config.number_of_containers)]
 
         # setup producers
         # self.producers = [Producer(self, choice(self.regions)) for _ in range(self.config.number_of_producers)]
@@ -39,4 +39,3 @@ class Environment(object):
         for _ in range(self.config.number_of_producers):
             producer = Producer(self, self.regions[_ % len(self.regions)])
             self.producers.append(producer)
-
