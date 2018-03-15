@@ -1,0 +1,7 @@
+Required python packages:
+
+numpy
+tabulate
+matplotlib
+ortools
+pandas
