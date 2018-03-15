@@ -102,3 +102,6 @@ ENV/
 
 # Jetbrains IDE
 /.idea
+
+# Experiments
+/experiments
