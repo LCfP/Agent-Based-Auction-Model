@@ -103,4 +103,5 @@ ENV/
 # Jetbrains IDE
 /.idea
 
-*.csv
+# Experiments
+/experiments

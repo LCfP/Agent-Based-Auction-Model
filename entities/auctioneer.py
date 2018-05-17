@@ -6,7 +6,12 @@ from tabulate import tabulate
 
 
 class Auctioneer(Entity):
+    """
+    All following functions are allocated to the class 'auctioneer' / Entity
+    The parameters 'environment' and 'region_id' are assigned to the class
+    Variables are assigned to all mentioned parameters
 
+    """
     def __init__(self, env, region):
         super().__init__()
         self.env = env
@@ -16,8 +21,8 @@ class Auctioneer(Entity):
 
         self.entities = {}
 
-        self.auctionable_shipments = []
-        self.container_bids = []
+        self.auctionable_shipments = [] #zero or one occurance (optional)?
+        self.container_bids = [] #zero or one occurance (optional)?
 
         self.account_value = 1000
 
