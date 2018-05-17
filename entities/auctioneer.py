@@ -8,6 +8,7 @@ from tabulate import tabulate
 class Auctioneer(Entity):
 
     def __init__(self, env, region):
+        super().__init__()
         self.env = env
         self.region = region
 

@@ -7,6 +7,8 @@ from random import choice
 class Transportcompany(Entity):
 
     def __init__(self, env):
+        super().__init__()
+
         self.env = env
         self.transporters = [Transporter(self.env, choice(self.env.regions))
                              for _ in

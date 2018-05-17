@@ -5,6 +5,7 @@ from enums import EntityTypes
 class Seller(Entity):
 
     def __init__(self, env):
+        super().__init__()
         self.env = env
 
         self.type = EntityTypes.SELLER
