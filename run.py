@@ -46,12 +46,15 @@ if __name__ == "__main__":
     '''Determine total number of experiments and specify the number of threads
     to use'''
 
-    no_threads = 1
-    jobs_per_thread = 1
+    run_sim(0)
 
-    executor = ProcessPoolExecutor(no_threads)
-    items = [[start, start + jobs_per_thread] for start in range(
-        0, jobs_per_thread * no_threads, jobs_per_thread)]
 
-    futures = [executor.submit(job, item) for item in items]
-    wait(futures)
+    # no_threads = 1
+    # jobs_per_thread = 1
+    #
+    # executor = ProcessPoolExecutor(no_threads)
+    # items = [[start, start + jobs_per_thread] for start in range(
+    #     0, jobs_per_thread * no_threads, jobs_per_thread)]
+    #
+    # futures = [executor.submit(job, item) for item in items]
+    # wait(futures)
