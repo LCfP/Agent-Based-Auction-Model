@@ -4,7 +4,7 @@ from numpy.random import randint
 class Config(object):
     run_length = 250
 
-    regions = 4   # should *always* be a square map
+    regions = 16   # should *always* be a square map
     region_size = 25  # each region is itself square
 
     transport_cost = 1
@@ -12,8 +12,8 @@ class Config(object):
     number_of_bids = 5  # number of container bids
     idle_max = 3  # number of days before container repositions to hub
 
-    number_of_containers = 32
-    number_of_producers = 16
+    number_of_containers = 128
+    number_of_producers = 64
     number_of_transporters = 48
 
     producer_surplus_percentage = 0.5  # = 50%
@@ -28,7 +28,7 @@ class Config(object):
 
     debug = False
     surplus_tool_debug = False
-    plot = True
+    plot = False
 
     warmup_period = 100
 

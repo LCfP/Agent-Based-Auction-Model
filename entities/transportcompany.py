@@ -4,6 +4,7 @@ from enums import TransporterState, ContainerState
 from tools import route_euclidean_distance
 from random import choice
 
+
 class Transportcompany(Entity):
 
     def __init__(self, env):
@@ -32,7 +33,6 @@ class Transportcompany(Entity):
                         [distance_to_pickup,transporter]
             return closest_distance_to_pickup[1]
         return
-
 
     def assign_transporter(self, container):
         closest_transporter = self.find_closest_transporter(container)

@@ -8,16 +8,10 @@ class Region(Entity):
 
     def __init__(self, env, region_id: int):
         self.env = env
-
         self.id = region_id
-
         self.auctioneer = Auctioneer(env, self)
-
         self.geography = self._geography()
-
         self.type = EntityTypes.REGION
-
-
 
     def draw_location(self):
         """
@@ -29,6 +23,10 @@ class Region(Entity):
         return [x_coord, y_coord]
 
     def _geography(self):
+        """
+
+
+        """
         regions = self.env.config.regions
         side = int(np.sqrt(regions))
 

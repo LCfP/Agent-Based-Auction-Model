@@ -19,10 +19,8 @@ def best_match(container_bids, auctionable_shipments):
                                  'surplus'])
     for container_bid in container_bids:
         for shipment_offer in auctionable_shipments:
-            if container_bid.shipment_registration_key == \
-                        shipment_offer.registration_key:
-                if shipment_offer.biddingvalue - \
-                        container_bid.biddingvalue >= 0:
+            if container_bid.shipment_registration_key == shipment_offer.registration_key:
+                if shipment_offer.biddingvalue - container_bid.biddingvalue >= 0:
                     new_match = match(container_registration_key=
                                   container_bid.container_registration_key,
                                   shipment_registration_key=
