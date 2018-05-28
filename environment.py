@@ -8,6 +8,7 @@ class Environment(object):
 
     def __init__(self):
         self.config = Config()
+        self.day = 0
 
     def setup(self):
         """

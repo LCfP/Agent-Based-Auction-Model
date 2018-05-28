@@ -18,6 +18,8 @@ def run_sim(exp_no):
     matching_distances = []
 
     for day in range(environment.config.run_length):  # run model!
+        environment.day = day
+
         # Perform daily actions and save KPI matching distance info
         daily_actions(environment, matching_distances, day)
 
@@ -31,6 +33,16 @@ def run_sim(exp_no):
 
     # remove data during warmup period
     data = remove_warmup_period(environment, data)
+
+    request_shipments_avg = sum(
+        container._lookup["request_shipments"]
+        for container in environment.containers
+    ) / len(environment.containers)
+
+    print(request_shipments_avg)
+
+    for container in environment.containers:
+        print(container._lookup)
 
     # Calculate KPI scores
     calculate_averages(data, matching_distances, exp_no)

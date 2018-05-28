@@ -9,7 +9,7 @@ class Transporter(Entity):  # or name it truck?
     _ids = count(0)
 
     def __init__(self, env, region):
-        super().__init__()
+        super().__init__(env)
 
         self.env = env
         self.type = EntityTypes.TRANSPORTER

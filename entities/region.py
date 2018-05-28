@@ -5,14 +5,14 @@ from enums import EntityTypes
 
 
 class Region(Entity):
-"""
+    """
 All following functions are allocated to the class 'region'
 The parameters 'environment' and 'region_id' are assigned to the class
 Variables are assigned to all mentioned parameters
+    """
 
-"""
     def __init__(self, env, region_id: int):
-        super().__init__()
+        super().__init__(env)
 
         self.env = env
 

@@ -37,7 +37,7 @@ class Producer(Seller):
 
         for _ in range(self.production_rate):
             if len(self.storage) < self.storage_capacity:
-                shipment = Shipment(producer_id=self.id,
+                shipment = Shipment(self.env, producer_id=self.id,
                                     location=self.location,
                                     destination=self._set_destination(),
                                     region=self.region)
@@ -143,7 +143,7 @@ class Producer(Seller):
         # add shipment to storage when fully produced
         if self.production_status >= 1:
 
-            shipment = Shipment(producer_id=self.id,
+            shipment = Shipment(self.env, producer_id=self.id,
                                 location=self.location,
                                 destination=self._set_destination(),
                                 region=self.region)

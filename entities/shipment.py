@@ -6,8 +6,8 @@ from itertools import count
 class Shipment(Entity):
     _ids = count(0)
 
-    def __init__(self, producer_id, location, destination, region):
-        super().__init__()
+    def __init__(self, env, producer_id, location, destination, region):
+        super().__init__(env)
         self.producer_id = producer_id
         self.location = location
         self.destination = destination
