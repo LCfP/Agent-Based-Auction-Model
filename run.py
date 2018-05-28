@@ -25,11 +25,11 @@ def run_sim(exp_no):
         gathering_data(environment, day, containerinfo, shipmentinfo,
                        transporterinfo, producer_storage_info)
 
-    # rewrite gathered data into dataframe
+    # rewrite gathered data into data frame
     data = write_to_dataframe(environment,containerinfo,shipmentinfo,
                               transporterinfo, producer_storage_info)
 
-    # remove data during warmup period
+    # remove data during warm up period
     data = remove_warmup_period(environment, data)
 
     # Calculate KPI scores

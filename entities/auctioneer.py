@@ -69,7 +69,7 @@ class Auctioneer(Entity):
 
         return max_key + 1  # new key, one greater than the last
 
-    def list_shipment(self, producer_bid):  # name is porely chosen, easy way to change name in whole file?
+    def list_shipment(self, producer_bid):  # name is poorly chosen, easy way to change name in whole file?
         self.auctionable_shipments.append(producer_bid)
 
     def unlist_shipment(self,shipment_registration_key):
@@ -84,6 +84,9 @@ class Auctioneer(Entity):
                                   if container_bid.container_registration_key != container_registration_key]
 
     def match_containers_shipments(self):
+        """
+        What does this function do?
+        """
         matches = surplus_maximisation(self.container_bids,
                                        self.auctionable_shipments)
 
@@ -96,9 +99,10 @@ class Auctioneer(Entity):
         return matches
 
     def invoice_producers(self, matches):
-        ''' The auctioneer invoices the producer from the matched shipment.
-            In the current situation, the auctioneer does not obtain part of the surplus.
-        '''
+        """
+        The auctioneer invoices the producer from the matched shipment.
+        In the current situation, the auctioneer does not obtain part of the surplus.
+        """
         invoices = []
         invoice = namedtuple('invoice', 'producer_id shipment_id amount_due')
         if matches is not None: # required because if len = 0 the for loop will produce an error
@@ -153,9 +157,11 @@ class Auctioneer(Entity):
         return
 
     def finalize_matchmaking(self,matches):
-        '''I made a seperate function to unregister both container and shipments, otherwise it messes up the
+        """
+        I made a seperate function to unregister both container and shipments, otherwise it messes up the
         for loops in the invoice and container payment functions. And it seems nice to have a payment check
-        before the auctioneer finalizes its contact with the container and producer'''
+        before the auctioneer finalizes its contact with the container and producer
+        """
         if matches is not None: #TODO omzetten zodat de for loop weer op de eerste indent zit
             for match in matches:
                 shipment = self.unregister(EntityTypes.SHIPMENT, match.shipment_registration_key)

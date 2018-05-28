@@ -1,12 +1,14 @@
 from .seller import Seller
 from .shipment import Shipment
-from enums import EntityTypes, ShipmentState
+from enums import EntityTypes, ShipmentState, ProductType
 from itertools import count
 from random import randint
 from tools import route_euclidean_distance, find_hub_coordinates
 from collections import namedtuple
 from tabulate import tabulate
 from math import ceil
+from random import choice
+
 
 class Producer(Seller):
     _ids = count(0)
@@ -15,6 +17,9 @@ class Producer(Seller):
         super().__init__(env)
 
         self.type = EntityTypes.PRODUCER
+        # Product type
+        # Should I put the eNum here or just a random value to create different producers?
+        self.productType = choice(list(ProductType))
 
         self.production_rate = env.config.producer_production_rate()
 
@@ -28,10 +33,12 @@ class Producer(Seller):
         # only used for continuous
         self.production_status = 0
 
-
     def produce(self):
-        # a producer produces according to his production rate if he has room
-        # within his storage for the produced shipment
+        """
+        a producer produces according to his production rate if he has room
+        within his storage for the produced shipment
+        """
+
         if self.env.config.debug is True and self.region.id < 1:
             room_before_production = self.storage_capacity-len(self.storage)
 
@@ -40,7 +47,8 @@ class Producer(Seller):
                 shipment = Shipment(producer_id=self.id,
                                     location=self.location,
                                     destination=self._set_destination(),
-                                    region=self.region)
+                                    region=self.region,
+                                    producttype=self.productType)
                 self.storage.append(shipment)
 
         if self.env.config.debug is True and self.region.id < 1:
@@ -57,11 +65,14 @@ class Producer(Seller):
         return coordinates
 
     def bid(self, registrationkey, item : Shipment):
-        ''' Minimum shipment biddingvalue consists of:
+        """
+            Minimum shipment biddingvalue consists of:
         1) transport costs from hub to pickup location
-        2) transport costs from pickup location to destination'''
+        2) transport costs from pickup location to destination
+        """
         producerbid = namedtuple('producerbid', 'registration_key biddingvalue')
         hub_coords = find_hub_coordinates(self.region)
+        # TODO Requires product type
         transport_cost_from_hub = self.env.config.transport_cost * \
                                   route_euclidean_distance(self.env,
                                                            hub_coords,
@@ -149,7 +160,6 @@ class Producer(Seller):
                                 region=self.region)
             self.storage.append(shipment)
             self.production_status -= 1
-
 
         if self.env.config.debug:
             table = (["producer id", self.id],

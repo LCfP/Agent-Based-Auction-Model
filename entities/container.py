@@ -1,11 +1,10 @@
 from .buyer import Buyer
 from .shipment import Shipment
-from enums import EntityTypes, ContainerState
+from enums import EntityTypes, ContainerState, ProductType
 from itertools import count
 from tools import route_euclidean_distance, find_hub_coordinates
 from collections import namedtuple
-
-
+from random import choice
 
 class Container(Buyer):
     _ids = count(0)
@@ -14,6 +13,7 @@ class Container(Buyer):
         super().__init__(env)
 
         self.type = EntityTypes.CONTAINER
+        self.type  = choice(list(ProductType)) # Different containers have different types
 
         self.region = region
         self.location = region.draw_location()
@@ -34,6 +34,7 @@ class Container(Buyer):
             transport_cost_empty = route_euclidean_distance(self.env, self.location, shipment.location)
             transport_cost_shipment = route_euclidean_distance(self.env, shipment.location, shipment.destination)
             biddingvalue = transport_cost_empty + transport_cost_shipment
+            #TODO > Optioneel = bieding hoog maken voor verkeeerd product type
             #TODO add additional profit margin for container or decrease of biddingvalue based on urgency
             container_bid = containerbid(container_registration_key = registrationkey,
                                         shipment_registration_key = shipment_registration_key,
@@ -49,9 +50,11 @@ class Container(Buyer):
         return  self.region.auctioneer.entities[EntityTypes.SHIPMENT]# dict with shipment objects and their registration keys
 
     def select_best_shipments(self, available_shipments):
-        ''' In the final model, the container should make transport reservations for each shipment it bids on,
+        """
+        In the final model, the container should make transport reservations for each shipment it bids on,
         therefore the container places a limited number of bids. The container makes a selection based on the
-        distance to the shipments. The closer a container is to a shipment, the lower it can bid.'''
+        distance to the shipments. The closer a container is to a shipment, the lower it can bid.
+        """
         distance_to_shipments = []
 
         for key in available_shipments.keys():
@@ -71,9 +74,11 @@ class Container(Buyer):
         return best_shipments
 
     def bidding_proces(self,registrationkey):
-        '''A container first requests the available shipments of the auction in the region the container
+        """
+        A container first requests the available shipments of the auction in the region the container
         is located. Next the container selects the shipments he wants to bid on. And finally the container
-        constructs a set of bids'''
+        constructs a set of bids
+        """
         available_shipments = self.request_shipments()
         if available_shipments is not None:
             best_shipments = self.select_best_shipments(available_shipments)
@@ -87,7 +92,7 @@ class Container(Buyer):
 
         if self.env.config.debug and self.region.id < 1:
             print("there are no shipments available in region %s"
-                  %(self.region.id))
+                  %(self.region.id)
         return []
 
     def losing_auction_response(self):
