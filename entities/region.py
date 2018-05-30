@@ -3,6 +3,7 @@ from .auctioneer import Auctioneer
 import numpy as np
 from enums import EntityTypes
 
+#documentation done 30-05-2018 Meike Koenen
 
 class Region(Entity):
 

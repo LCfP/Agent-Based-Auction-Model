@@ -8,6 +8,8 @@ from collections import namedtuple
 from tabulate import tabulate  # to be able to print a table
 from math import ceil    # to return the ceiling of x as a float, the smallest integer value greater than or equal to x
 
+#documentation done 30-05-2018 Meike Koenen
+
 class Producer(Seller):
     _ids = count(0)
 
@@ -30,8 +32,7 @@ class Producer(Seller):
 
 
     def produce(self):
-        # a producer produces according to his production rate if he has room
-        # within his storage for the produced shipment
+    """a producer produces according to his production rate if he has room within his storage for the produced shipment"""
         if self.env.config.debug is True and self.region.id < 1:
             room_before_production = self.storage_capacity-len(self.storage)
 
@@ -53,7 +54,7 @@ class Producer(Seller):
 
     def _set_destination(self):
         coordinates = \
-            self.env.regions[randint(0,len(self.env.regions)-1)].draw_location()    # draws a location randomly between 0 and the number of items of an object (regions?)
+            self.env.regions[randint(0,len(self.env.regions)-1)].draw_location()    # randomly chooses a region. within the randomly chosen region, it picks a location
 
         return coordinates
 

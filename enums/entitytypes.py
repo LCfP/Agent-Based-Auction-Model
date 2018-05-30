@@ -1,5 +1,6 @@
 from enum import Enum
 
+#documentation done 30-05-2018 Meike Koenen
 
 class EntityTypes(Enum):
     """

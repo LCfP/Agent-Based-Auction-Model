@@ -1,17 +1,17 @@
 from .buyer import Buyer
 from .shipment import Shipment
 from enums import EntityTypes, ContainerState
-from itertools import count                                 #calling a tool for counting
+from itertools import count
 from tools import route_euclidean_distance, find_hub_coordinates
-from collections import namedtuple              #namedtuple make the code more readable than dictionaries and keep the order of the listed items
+from collections import namedtuple
 
-
+#documentation done 30-05-2018 Meike Koenen
 
 class Container(Buyer):
     _ids = count(0)           #returns the number of occurences of an element in a list starting with 0
 
     def __init__(self, env, region):
-        super().__init__(env)       #returns to a proxy object that delegates method calls to a parent or sibling class of type (environment? region?)
+        super().__init__(env)       #the class container inheriates dynamically from the class environment such that the class container is always up to date.
 
         self.type = EntityTypes.CONTAINER
         self.region = region
@@ -25,7 +25,7 @@ class Container(Buyer):
         self.idle_hours = 0 # used for continuous
 
     def create_bids(self, best_shipments, registrationkey):
-        """ creates the list with bids. The return fuction leaves the current function call with the list with bids as return value """
+        """ creates the list with bids. The return function leaves the current function call with the list with bids as return value """
 
         containerbid = namedtuple('containerbid', 'container_registration_key shipment_registration_key biddingvalue')
         containerbids = []
@@ -92,6 +92,7 @@ class Container(Buyer):
         return []
 
     def losing_auction_response(self):
+        """whenever a container loses an auction, there are three options: (1) container waits at current location for another day. (2) if the container waits longer than maximum idle days allowed (see config) and it is already located at the hub it will continue waiting (as it is the optimal place to bid). (3)  if the container waits longer than maximum idle days allowed (see config) and it is not yet at a hub, the container relocates to the nearby hub and continues waiting"""
         if self.env.config.debug:
             print("Container %s is still empty and undertakes action"
                   %(self.id))
@@ -171,3 +172,4 @@ class Container(Buyer):
                       "initiates relocation to a hub"
                       % (self.id,
                          self.idle_hours / self.env.config.hours_in_day))
+

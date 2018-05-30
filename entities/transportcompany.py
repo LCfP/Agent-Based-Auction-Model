@@ -5,7 +5,7 @@ from tools import route_euclidean_distance
 from random import choice
 
 class Transportcompany(Entity):
-
+"""the transport company matches its available transporters to containers awaiting pick-up"""
     def __init__(self, env):
         super().__init__()
 
