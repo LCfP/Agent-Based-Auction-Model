@@ -1,20 +1,19 @@
 from .buyer import Buyer
 from .shipment import Shipment
 from enums import EntityTypes, ContainerState
-from itertools import count
+from itertools import count                                 #calling a tool for counting
 from tools import route_euclidean_distance, find_hub_coordinates
-from collections import namedtuple
+from collections import namedtuple              #namedtuple make the code more readable than dictionaries and keep the order of the listed items
 
 
 
 class Container(Buyer):
-    _ids = count(0)
+    _ids = count(0)           #returns the number of occurences of an element in a list starting with 0
 
     def __init__(self, env, region):
-        super().__init__(env)
+        super().__init__(env)       #returns to a proxy object that delegates method calls to a parent or sibling class of type (environment? region?)
 
         self.type = EntityTypes.CONTAINER
-
         self.region = region
         self.location = region.draw_location()
         self.id = next(self._ids)
@@ -26,6 +25,8 @@ class Container(Buyer):
         self.idle_hours = 0 # used for continuous
 
     def create_bids(self, best_shipments, registrationkey):
+        """ creates the list with bids. The return fuction leaves the current function call with the list with bids as return value """
+
         containerbid = namedtuple('containerbid', 'container_registration_key shipment_registration_key biddingvalue')
         containerbids = []
         for entry in best_shipments:

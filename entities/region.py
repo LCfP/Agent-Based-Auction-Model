@@ -5,10 +5,12 @@ from enums import EntityTypes
 
 
 class Region(Entity):
+
 """
 All following functions are allocated to the class 'region'
 The parameters 'environment' and 'region_id' are assigned to the class
 Variables are assigned to all mentioned parameters
+An auctioneer is assigned to the class. The region is given a specific geography which is created by the function (self._geography). A type is attached to the region using enums
 
 """
     def __init__(self, env, region_id: int):

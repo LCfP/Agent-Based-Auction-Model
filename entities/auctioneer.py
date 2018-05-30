@@ -7,7 +7,7 @@ from tabulate import tabulate
 
 class Auctioneer(Entity):
     """
-    All following functions are allocated to the class 'auctioneer' / Entity
+    All following functions are allocated to the class 'auctioneer'
     The parameters 'environment' and 'region_id' are assigned to the class
     Variables are assigned to all mentioned parameters
 
@@ -19,10 +19,10 @@ class Auctioneer(Entity):
 
         self.type = EntityTypes.AUCTIONEER
 
-        self.entities = {}
+        self.entities = {}#create an empty dictionary
 
-        self.auctionable_shipments = [] #zero or one occurance (optional)?
-        self.container_bids = [] #zero or one occurance (optional)?
+        self.auctionable_shipments = [] #create an empty list to which we can add all available shipments for auction
+        self.container_bids = [] #create an empty list to which we can add all container bids
 
         self.account_value = 1000
 
@@ -84,6 +84,7 @@ class Auctioneer(Entity):
                                   if container_bid.container_registration_key != container_registration_key]
 
     def match_containers_shipments(self):
+        """Matches the given list of container bids with list of avaiable shipments    """
         matches = surplus_maximisation(self.container_bids,
                                        self.auctionable_shipments)
 

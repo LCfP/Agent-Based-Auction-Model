@@ -2,11 +2,11 @@ from .seller import Seller
 from .shipment import Shipment
 from enums import EntityTypes, ShipmentState
 from itertools import count
-from random import randint
+from random import randint          # to pick a random number in a given range
 from tools import route_euclidean_distance, find_hub_coordinates
 from collections import namedtuple
-from tabulate import tabulate
-from math import ceil
+from tabulate import tabulate  # to be able to print a table
+from math import ceil    # to return the ceiling of x as a float, the smallest integer value greater than or equal to x
 
 class Producer(Seller):
     _ids = count(0)
@@ -53,7 +53,8 @@ class Producer(Seller):
 
     def _set_destination(self):
         coordinates = \
-            self.env.regions[randint(0,len(self.env.regions)-1)].draw_location()
+            self.env.regions[randint(0,len(self.env.regions)-1)].draw_location()    # draws a location randomly between 0 and the number of items of an object (regions?)
+
         return coordinates
 
     def bid(self, registrationkey, item : Shipment):
