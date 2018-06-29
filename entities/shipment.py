@@ -2,7 +2,7 @@ from .entity import Entity
 from enums import EntityTypes, ShipmentState
 from itertools import count
 
-
+"""Packets are manufactured by producer. Shipments are shipped by containers."""
 class Shipment(Entity):
     _ids = count(0)
 

@@ -4,12 +4,15 @@ from itertools import count
 from tools import route_euclidean_distance, find_region, find_hub_coordinates
 from types import SimpleNamespace
 
+#documentation done by Michiel Horst 14-03-18
+
 
 class Transporter(Entity):  # or name it truck?
     _ids = count(0)
 
     def __init__(self, env, region):
-        super().__init__() #the class transporter inherits dynamically from the class environment such that the class transporter is always up to date.
+        super().__init__() #the class transporter inherits dynamically from the class environment such that the class
+        # transporter is always up to date.
 
         self.env = env
         self.type = EntityTypes.TRANSPORTER
@@ -17,8 +20,8 @@ class Transporter(Entity):  # or name it truck?
         self.location = region.draw_location()  # could be changed to location of hubs in the region
         self.id = next(self._ids)
         self.data = SimpleNamespace()
-        # roep in de init de _data() functie aan om alle waardes toe te kennen.
-        # Vervang alle onderstaande variabelen
+        """call form the init the data function to assign all vallues and replace all variables below """
+
         self.account_value = 0  # TODO add payment for transport by container
         self.state = TransporterState.EMPTY
         self.load = 0  # this attribute stores the container it is transporting

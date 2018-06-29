@@ -11,7 +11,8 @@ class Container(Buyer):
     _ids = count(0)           #returns the number of occurences of an element in a list starting with 0
 
     def __init__(self, env, region):
-        super().__init__(env)       #the class container inherits dynamically from the class environment such that the class container is always up to date.
+        super().__init__(env)       #the class container inherits dynamically from the class environment such that
+        # the class container is always up to date.
 
         self.type = EntityTypes.CONTAINER
         self.region = region
@@ -19,13 +20,15 @@ class Container(Buyer):
         self.id = next(self._ids)
         self.state = ContainerState.EMPTY
         self.account_value = self.env.config.container_starting_account_value
-        self.shipment_contracts = [] # list because in the future, containers could bid on shipments, when they are loaded
+        self.shipment_contracts = [] # list because in the future, containers could bid on shipments, when they are
+        # loaded
         self.load = 0
         self.idle_days = 1 # checked at end of day, therefore initially 1 day idle
         self.idle_hours = 0 # used for continuous
 
     def create_bids(self, best_shipments, registrationkey):
-        """ creates the list with bids. The return function leaves the current function call with the list with bids as return value """
+        """ creates the list with bids. The return function leaves the current function call with the list with bids as
+        return value """
 
         containerbid = namedtuple('containerbid', 'container_registration_key shipment_registration_key biddingvalue')
         containerbids = []
@@ -47,7 +50,8 @@ class Container(Buyer):
         if EntityTypes.SHIPMENT not in \
                 self.region.auctioneer.entities.keys(): # There are currently no shipments available
             return
-        return  self.region.auctioneer.entities[EntityTypes.SHIPMENT]# dict with shipment objects and their registration keys
+        return  self.region.auctioneer.entities[EntityTypes.SHIPMENT]# dict with shipment objects and their
+        # registration keys
 
     def select_best_shipments(self, available_shipments):
         ''' In the final model, the container should make transport reservations for each shipment it bids on,
@@ -92,7 +96,11 @@ class Container(Buyer):
         return []
 
     def losing_auction_response(self):
-        """whenever a container loses an auction, there are three options: (1) container waits at current location for another day. (2) if the container waits longer than maximum idle days allowed (see config) and it is already located at the hub it will continue waiting (as it is the optimal place to bid). (3)  if the container waits longer than maximum idle days allowed (see config) and it is not yet at a hub, the container relocates to the nearby hub and continues waiting"""
+        """whenever a container loses an auction, there are three options: (1) container waits at current location for
+        another day. (2) if the container waits longer than maximum idle days allowed (see config) and it is already
+        located at the hub it will continue waiting (as it is the optimal place to bid). (3)  if the container waits
+        longer than maximum idle days allowed (see config) and it is not yet at a hub, the container relocates to the
+        nearby hub and continues waiting"""
         if self.env.config.debug:
             print("Container %s is still empty and undertakes action"
                   %(self.id))

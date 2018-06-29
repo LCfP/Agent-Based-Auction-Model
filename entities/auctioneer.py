@@ -4,7 +4,7 @@ from tools import surplus_maximisation, best_match
 from collections import namedtuple
 from tabulate import tabulate
 
-
+'#Documentation done 30-5-18 Meike Koenen'
 class Auctioneer(Entity):
     """
     All following functions are allocated to the class 'auctioneer'
