@@ -11,7 +11,7 @@ class Container(Buyer):
     _ids = count(0)           #returns the number of occurences of an element in a list starting with 0
 
     def __init__(self, env, region):
-        super().__init__(env)       #the class container inheriates dynamically from the class environment such that the class container is always up to date.
+        super().__init__(env)       #the class container inherits dynamically from the class environment such that the class container is always up to date.
 
         self.type = EntityTypes.CONTAINER
         self.region = region

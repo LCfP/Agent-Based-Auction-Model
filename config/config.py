@@ -24,14 +24,14 @@ class Config(object):
 
     transport_speed = 25
     storage_capacity = 20
-    storage_urgency_level = 0.3
+    storage_urgency_level = 0.3 # = 30 %
 
     debug = False
     surplus_tool_debug = False
     plot = True
 
-    warmup_period = 100
+    warmup_period = 100 # number of days
 
     @staticmethod
     def producer_production_rate():
-        return randint(1, 2)
+        return randint(1, 2) #return a random integer between 1 and 2

@@ -10,7 +10,7 @@ class Config_continuous(object):
     regions = 4   # should *always* be a square map
     region_size = 25  # each region is itself square
 
-    transport_cost = 1
+    transport_cost = 1 #dollar/euro per transport?
 
     number_of_bids = 5  # number of container bids
     idle_max = 3 * hours_in_day  # number of days before container repositions to hub

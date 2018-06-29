@@ -9,7 +9,7 @@ class Transporter(Entity):  # or name it truck?
     _ids = count(0)
 
     def __init__(self, env, region):
-        super().__init__()
+        super().__init__() #the class transporter inherits dynamically from the class environment such that the class transporter is always up to date.
 
         self.env = env
         self.type = EntityTypes.TRANSPORTER
